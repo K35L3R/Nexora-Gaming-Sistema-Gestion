@@ -52,3 +52,28 @@ def realizar_venta(productos):
     print("Cantidad:", cantidad)
     print("Subtotal: Q", subtotal)
     print("Stock restante:", producto_encontrado[4])
+
+def mostrar_estadisticas(productos):
+    print("\n========== ESTADISTICAS ==========")
+
+    total_productos = len(productos)
+
+    total_stock = 0
+    valor_inventario = 0
+
+    for producto in productos:
+        total_stock = total_stock + producto[4]
+        valor_inventario = valor_inventario + (producto[3] * producto[4])
+
+    total_unidades_vendidas = 0
+    total_ventas = 0
+
+    for venta in ventas:
+        total_unidades_vendidas = total_unidades_vendidas + venta[2]
+        total_ventas = total_ventas + venta[3]
+
+    print("Productos registrados:", total_productos)
+    print("Unidades en inventario:", total_stock)
+    print("Valor del inventario: Q", valor_inventario)
+    print("Unidades vendidas:", total_unidades_vendidas)
+    print("Total de ventas: Q", total_ventas)
