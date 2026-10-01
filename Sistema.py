@@ -203,65 +203,147 @@ def eliminar_producto():
 # FUNCIÓN PARA MOSTRAR MENÚ
 # ==========================================
 
-def mostrar_menu():
+def mostrar_menu(rol):
 
     while True:
 
         print("\n========================================")
         print("             MENÚ PRINCIPAL")
         print("========================================")
-        print("1. Agregar producto")
-        print("2. Listar productos")
-        print("3. Buscar producto")
-        print("4. Eliminar producto")
-        print("5. Realizar venta")
-        print("6. Estadísticas")
-        print("7. Salir")
+        print("Rol:", rol)
+        print("========================================")
+
+        # MENÚ DEL ADMINISTRADOR
+        if rol == "Administrador":
+
+            print("1. Agregar producto")
+            print("2. Listar productos")
+            print("3. Buscar producto")
+            print("4. Eliminar producto")
+            print("5. Realizar venta")
+            print("6. Estadísticas")
+            print("7. Salir")
+
+        # MENÚ DEL VENDEDOR
+        elif rol == "Vendedor":
+
+            print("1. Listar productos")
+            print("2. Buscar producto")
+            print("3. Realizar venta")
+            print("4. Estadísticas")
+            print("5. Salir")
+
+        # MENÚ DEL ENCARGADO DE INVENTARIO
+        elif rol == "Encargado de Inventario":
+
+            print("1. Agregar producto")
+            print("2. Listar productos")
+            print("3. Buscar producto")
+            print("4. Eliminar producto")
+            print("5. Estadísticas")
+            print("6. Salir")
+
         print("========================================")
 
         opcion = input("Seleccione una opción: ")
 
-        if opcion == "1":
 
-            agregar_producto()
+        # ==========================================
+        # OPCIONES DEL ADMINISTRADOR
+        # ==========================================
 
-        elif opcion == "2":
+        if rol == "Administrador":
 
-            listar_productos()
+            if opcion == "1":
+                agregar_producto()
 
-        elif opcion == "3":
+            elif opcion == "2":
+                listar_productos()
 
-            buscar_producto()
+            elif opcion == "3":
+                buscar_producto()
 
-        elif opcion == "4":
+            elif opcion == "4":
+                eliminar_producto()
 
-            eliminar_producto()
+            elif opcion == "5":
+                realizar_venta(productos)
 
-        elif opcion == "5":
+            elif opcion == "6":
+                mostrar_estadisticas(productos)
 
-            realizar_venta(productos)
+            elif opcion == "7":
+                print("\nGracias por utilizar NEXORA Gaming.")
+                break
 
-        elif opcion == "6":
+            else:
+                print("\nOpción inválida.")
 
-            mostrar_estadisticas(productos)
 
-        elif opcion == "7":
+        # ==========================================
+        # OPCIONES DEL VENDEDOR
+        # ==========================================
 
-            print("\nGracias por utilizar NEXORA Gaming.")
-            break
+        elif rol == "Vendedor":
 
-        else:
+            if opcion == "1":
+                listar_productos()
 
-            print("\nOpción inválida. Seleccione una opción del 1 al 7.")
+            elif opcion == "2":
+                buscar_producto()
+
+            elif opcion == "3":
+                realizar_venta(productos)
+
+            elif opcion == "4":
+                mostrar_estadisticas(productos)
+
+            elif opcion == "5":
+                print("\nGracias por utilizar NEXORA Gaming.")
+                break
+
+            else:
+                print("\nOpción inválida.")
+
+
+        # ==========================================
+        # OPCIONES DEL ENCARGADO DE INVENTARIO
+        # ==========================================
+
+        elif rol == "Encargado de Inventario":
+
+            if opcion == "1":
+                agregar_producto()
+
+            elif opcion == "2":
+                listar_productos()
+
+            elif opcion == "3":
+                buscar_producto()
+
+            elif opcion == "4":
+                eliminar_producto()
+
+            elif opcion == "5":
+                mostrar_estadisticas(productos)
+
+            elif opcion == "6":
+                print("\nGracias por utilizar NEXORA Gaming.")
+                break
+
+            else:
+                print("\nOpción inválida.")
 
 
 # ==========================================
 # PROGRAMA PRINCIPAL
 # ==========================================
 
-if iniciar_sesion():
+usuario, rol = iniciar_sesion()
 
-    mostrar_menu()
+if usuario is not None:
+
+    mostrar_menu(rol)
 
 else:
 
