@@ -1,3 +1,4 @@
+```python
 # ==========================================
 # NEXORA GAMING & TECHNOLOGY
 # Sistema de Gestión de Inventario y Ventas
@@ -200,6 +201,30 @@ def eliminar_producto():
 
 
 # ==========================================
+# FUNCIÓN PARA VERIFICAR PERMISOS
+# ==========================================
+
+def tiene_permiso(rol, opcion):
+
+    if rol == "Administrador":
+
+        if opcion in ["1", "2", "3", "4", "5", "6"]:
+            return True
+
+    elif rol == "Vendedor":
+
+        if opcion in ["1", "2", "3", "4"]:
+            return True
+
+    elif rol == "Encargado de Inventario":
+
+        if opcion in ["1", "2", "3", "4", "5"]:
+            return True
+
+    return False
+
+
+# ==========================================
 # FUNCIÓN PARA MOSTRAR MENÚ
 # ==========================================
 
@@ -348,3 +373,4 @@ if usuario is not None:
 else:
 
     print("\nAcceso bloqueado. El programa finalizará.")
+```
