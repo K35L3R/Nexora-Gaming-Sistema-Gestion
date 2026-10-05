@@ -1,3 +1,4 @@
+```python
 # ==========================================
 # USUARIOS
 # NEXORA GAMING & TECHNOLOGY
@@ -30,6 +31,11 @@ def iniciar_sesion():
         print("\n========== INICIO DE SESION ==========")
 
         usuario = input("Ingrese su usuario: ")
+
+        if usuario.lower() == "salir":
+            print("\nSaliendo del sistema...")
+            return None, None
+
         contrasena = input("Ingrese su contraseña: ")
 
         if usuario in USUARIOS:
@@ -50,5 +56,7 @@ def iniciar_sesion():
         print("Intentos restantes:", intentos)
 
     print("\nSe agotaron los intentos.")
+    print("Acceso bloqueado.")
 
     return None, None
+```
