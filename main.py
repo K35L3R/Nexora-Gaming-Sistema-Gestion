@@ -1,5 +1,4 @@
 import csv
-import os   
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -17,7 +16,7 @@ ventana.minsize(750, 450)
 codigo = tk.StringVar()
 nombre = tk.StringVar()
 precio = tk.StringVar()
-cantidad = tk.StringVar()
+stock = tk.StringVar()
 
 
 # Limpiar campos
@@ -25,7 +24,7 @@ def limpiar():
     codigo.set("")
     nombre.set("")
     precio.set("")
-    cantidad.set("")
+    stock.set("")
 
 
 # Mostrar productos en la tabla
@@ -44,7 +43,7 @@ def mostrar_productos(lista=None):
                 producto["codigo"],
                 producto["nombre"],
                 f"Q{producto['precio']:.2f}",
-                producto["cantidad"]
+                producto["stock"]
             )
         )
 
@@ -56,7 +55,7 @@ def agregar():
             codigo.get(),
             nombre.get(),
             precio.get(),
-            cantidad.get()
+            stock.get()
         )
 
         messagebox.showinfo(
@@ -91,7 +90,7 @@ def buscar():
 
     nombre.set(producto["nombre"])
     precio.set(str(producto["precio"]))
-    cantidad.set(str(producto["cantidad"]))
+    stock.set(str(producto["stock"]))
 
     mostrar_productos([producto])
 
@@ -147,7 +146,7 @@ def seleccionar(evento):
     codigo.set(valores[0])
     nombre.set(valores[1])
     precio.set(valores[2].replace("Q", ""))
-    cantidad.set(valores[3])
+    stock.set(str(valores[3]))
 
 
 # Título
@@ -185,7 +184,7 @@ tk.Entry(formulario, textvariable=nombre).grid(
     row=0, column=3, padx=5, pady=5
 )
 
-tk.Label(formulario, text="Precio:").grid(
+tk.Label(formulario, text="Precio (Q):").grid(
     row=1, column=0, padx=5, pady=5
 )
 
@@ -193,11 +192,11 @@ tk.Entry(formulario, textvariable=precio).grid(
     row=1, column=1, padx=5, pady=5
 )
 
-tk.Label(formulario, text="Cantidad:").grid(
+tk.Label(formulario, text="Stock:").grid(
     row=1, column=2, padx=5, pady=5
 )
 
-tk.Entry(formulario, textvariable=cantidad).grid(
+tk.Entry(formulario, textvariable=stock).grid(
     row=1, column=3, padx=5, pady=5
 )
 
@@ -241,7 +240,7 @@ ttk.Button(
 contenedor = tk.Frame(ventana)
 contenedor.pack(fill="both", expand=True, padx=20, pady=10)
 
-columnas = ("codigo", "nombre", "precio", "cantidad")
+columnas = ("codigo", "nombre", "precio", "stock")
 
 tabla = ttk.Treeview(
     contenedor,
@@ -252,12 +251,12 @@ tabla = ttk.Treeview(
 tabla.heading("codigo", text="Código")
 tabla.heading("nombre", text="Nombre")
 tabla.heading("precio", text="Precio")
-tabla.heading("cantidad", text="Cantidad")
+tabla.heading("stock", text="Stock")
 
 tabla.column("codigo", width=100)
 tabla.column("nombre", width=250)
 tabla.column("precio", width=120)
-tabla.column("cantidad", width=100)
+tabla.column("stock", width=100)
 
 scroll = ttk.Scrollbar(
     contenedor,
@@ -277,6 +276,7 @@ tabla.bind("<<TreeviewSelect>>", seleccionar)
 try:
     inventario.cargar_productos()
     mostrar_productos()
+
 except (ValueError, KeyError, OSError, csv.Error) as error:
     messagebox.showerror(
         "Error de carga",
