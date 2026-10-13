@@ -7,7 +7,7 @@ ARCHIVO = os.path.join(
     "productos.csv"
 )
 
-CAMPOS = ["codigo", "nombre", "precio", "cantidad"]
+CAMPOS = ["codigo", "nombre", "precio", "stock"]
 productos = []
 
 
@@ -25,7 +25,7 @@ def cargar_productos():
                 "codigo": fila["codigo"],
                 "nombre": fila["nombre"],
                 "precio": float(fila["precio"]),
-                "cantidad": int(fila["cantidad"])
+                "stock": int(fila["stock"])
             }
 
             productos.append(producto)
@@ -52,7 +52,7 @@ def buscar_producto(codigo):
     return None
 
 
-def agregar_producto(codigo, nombre, precio, cantidad):
+def agregar_producto(codigo, nombre, precio, stock):
     codigo = codigo.strip().upper()
     nombre = nombre.strip()
 
@@ -64,21 +64,21 @@ def agregar_producto(codigo, nombre, precio, cantidad):
 
     try:
         precio = float(precio)
-        cantidad = int(cantidad)
+        stock = int(stock)
     except ValueError:
-        raise ValueError("El precio o la cantidad no son válidos.")
+        raise ValueError("El precio o el stock no son válidos.")
 
     if not math.isfinite(precio) or precio <= 0:
         raise ValueError("El precio debe ser mayor que cero.")
 
-    if cantidad < 0:
-        raise ValueError("La cantidad no puede ser negativa.")
+    if stock < 0:
+        raise ValueError("El stock no puede ser negativo.")
 
     producto = {
         "codigo": codigo,
         "nombre": nombre,
         "precio": precio,
-        "cantidad": cantidad
+        "stock": stock
     }
 
     productos.append(producto)
