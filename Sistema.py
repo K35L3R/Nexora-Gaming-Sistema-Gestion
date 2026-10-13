@@ -97,10 +97,11 @@ def listar_productos():
         print("No hay productos registrados.")
         return
 
+
     print(
         f"{'ID':<8}"
         f"{'PRODUCTO':<25}"
         f"{'CATEGORÍA':<20}"
         f"{'PRECIO':<12}"
-        f"{'STO
-```
+        f"{'STOCK':<10}"
+    )
