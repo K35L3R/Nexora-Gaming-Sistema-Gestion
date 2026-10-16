@@ -1,304 +1,282 @@
 
 # ==========================================
+# SISTEMA PRINCIPAL
 # NEXORA GAMING & TECHNOLOGY
-# Sistema de Gestión de Inventario y Ventas
 # ==========================================
 
+import inventario
 from usuario import iniciar_sesion
 from ventas import realizar_venta, mostrar_estadisticas
 
 
-# ==========================================
-# LISTA DE PRODUCTOS
-# ==========================================
-
-productos = []
-
-
-# ==========================================
-# AGREGAR PRODUCTO
-# ==========================================
-
 def agregar_producto():
     print("\n========== AGREGAR PRODUCTO ==========")
 
-    id_producto = input("ID del producto: ").strip().upper()
+    codigo = input("Ingrese el código del producto: ")
+    nombre = input("Ingrese el nombre del producto: ")
+    precio = input("Ingrese el precio de venta: Q ")
+    stock = input("Ingrese la cantidad disponible: ")
 
-    if id_producto == "":
-        print("El ID no puede estar vacío.")
-        return
+    try:
+        inventario.agregar_producto(codigo, nombre, precio, stock)
+        print("\nProducto agregado correctamente.")
 
-    for producto in productos:
-        if producto[0] == id_producto:
-            print("Ya existe un producto con ese ID.")
-            return
+    except ValueError as error:
+        print("\nError:", error)
 
-    nombre = input("Nombre del producto: ").strip()
-    categoria = input("Categoría: ").strip()
+    except OSError:
+        print("\nError al guardar el producto en el archivo.")
 
-    if nombre == "" or categoria == "":
-        print("El nombre y la categoría son obligatorios.")
-        return
-
-    while True:
-        try:
-            precio = float(input("Precio de venta (Q): "))
-
-            if precio <= 0:
-                print("El precio debe ser mayor que cero.")
-            else:
-                break
-
-        except ValueError:
-            print("Ingrese un precio válido.")
-
-    while True:
-        try:
-            cantidad = int(input("Cantidad disponible: "))
-
-            if cantidad < 0:
-                print("La cantidad no puede ser negativa.")
-            else:
-                break
-
-        except ValueError:
-            print("Ingrese una cantidad válida.")
-
-    producto = [
-        id_producto,
-        nombre,
-        categoria,
-        precio,
-        cantidad
-    ]
-
-    productos.append(producto)
-
-    print("\nProducto agregado correctamente.")
-
-
-# ==========================================
-# LISTAR PRODUCTOS
-# ==========================================
 
 def listar_productos():
-    print("\n========== INVENTARIO ==========")
+    print("\n========== LISTA DE PRODUCTOS ==========")
 
-    if len(productos) == 0:
+    productos = inventario.listar_productos()
+
+    if not productos:
         print("No hay productos registrados.")
         return
 
-    print(
-        f"{'ID':<12}"
-        f"{'PRODUCTO':<25}"
-        f"{'CATEGORÍA':<20}"
-        f"{'PRECIO':<14}"
-        f"{'STOCK':<8}"
-    )
-
-    print("-" * 79)
+    print("-" * 75)
+    print("{:<15} {:<30} {:>12} {:>10}".format(
+        "CODIGO", "NOMBRE", "PRECIO", "STOCK"
+    ))
+    print("-" * 75)
 
     for producto in productos:
-        print(
-            f"{producto[0]:<12}"
-            f"{producto[1][:24]:<25}"
-            f"{producto[2][:19]:<20}"
-            f"Q{producto[3]:<13.2f}"
-            f"{producto[4]:<8}"
-        )
+        print("{:<15} {:<30} Q{:>10.2f} {:>10}".format(
+            producto["codigo"],
+            producto["nombre"][:30],
+            producto["precio"],
+            producto["stock"]
+        ))
 
+    print("-" * 75)
 
-# ==========================================
-# BUSCAR PRODUCTO
-# ==========================================
 
 def buscar_producto():
     print("\n========== BUSCAR PRODUCTO ==========")
 
-    id_buscar = input("Ingrese el ID del producto: ").strip().upper()
+    codigo = input("Ingrese el código del producto: ")
 
-    for producto in productos:
-        if producto[0] == id_buscar:
-            print("\nProducto encontrado.")
-            print("ID:", producto[0])
-            print("Nombre:", producto[1])
-            print("Categoría:", producto[2])
-            print("Precio: Q", format(producto[3], ".2f"))
-            print("Stock:", producto[4])
-            return
+    producto = inventario.buscar_producto(codigo)
 
-    print("No se encontró un producto con ese ID.")
+    if producto is None:
+        print("\nEl producto no existe.")
+        return
 
+    print("\nProducto encontrado:")
+    print("Código:", producto["codigo"])
+    print("Nombre:", producto["nombre"])
+    print("Precio: Q", producto["precio"])
+    print("Stock disponible:", producto["stock"])
 
-# ==========================================
-# ELIMINAR PRODUCTO
-# ==========================================
 
 def eliminar_producto():
     print("\n========== ELIMINAR PRODUCTO ==========")
 
-    if len(productos) == 0:
+    codigo = input("Ingrese el código del producto: ")
+
+    producto = inventario.buscar_producto(codigo)
+
+    if producto is None:
+        print("\nEl producto no existe.")
+        return
+
+    print("\nProducto:", producto["nombre"])
+    print("Código:", producto["codigo"])
+
+    confirmar = input("¿Desea eliminarlo? (s/n): ").strip().lower()
+
+    if confirmar != "s":
+        print("\nOperación cancelada.")
+        return
+
+    try:
+        inventario.eliminar_producto(codigo)
+        print("\nProducto eliminado correctamente.")
+
+    except ValueError as error:
+        print("\nError:", error)
+
+    except OSError:
+        print("\nError al guardar los cambios.")
+
+
+def preparar_productos_ventas():
+    """
+    Adapta temporalmente los diccionarios del inventario
+    al formato de listas que utiliza la versión actual
+    de ventas.py.
+    """
+
+    productos = inventario.listar_productos()
+    productos_ventas = []
+
+    for producto in productos:
+        productos_ventas.append([
+            producto["codigo"],
+            producto["nombre"],
+            "",
+            producto["precio"],
+            producto["stock"]
+        ])
+
+    return productos, productos_ventas
+
+
+def registrar_venta():
+    print("\n========== REALIZAR VENTA ==========")
+
+    productos, productos_ventas = preparar_productos_ventas()
+
+    if not productos:
         print("No hay productos registrados.")
         return
 
-    id_eliminar = input(
-        "Ingrese el ID del producto que desea eliminar: "
-    ).strip().upper()
+    # Ejecutar el módulo de ventas existente.
+    try:
+        realizar_venta(productos_ventas)
 
-    for producto in productos:
-        if producto[0] == id_eliminar:
-            print("\nProducto:", producto[1])
-            print("Categoría:", producto[2])
-            print("Precio: Q", format(producto[3], ".2f"))
-            print("Stock:", producto[4])
+        # Sincronizar el stock con el inventario original.
+        cambios = False
 
-            confirmacion = input(
-                "¿Desea eliminarlo? (s/n): "
-            ).strip().lower()
+        for producto, producto_venta in zip(
+            productos, productos_ventas
+        ):
+            if producto["stock"] != producto_venta[4]:
+                producto["stock"] = producto_venta[4]
+                cambios = True
 
-            if confirmacion == "s":
-                productos.remove(producto)
-                print("Producto eliminado correctamente.")
-            else:
-                print("Eliminación cancelada.")
+        if cambios:
+            inventario.guardar_productos()
+            print("\nInventario actualizado correctamente.")
 
-            return
+    except (ValueError, IndexError) as error:
+        print("\nNo se pudo completar la operación:", error)
 
-    print("No se encontró un producto con ese ID.")
+    except OSError:
+        print("\nError al guardar el inventario.")
 
 
-# ==========================================
-# MENÚ PRINCIPAL
-# ==========================================
+def ver_estadisticas():
+    print("\n========== ESTADISTICAS ==========")
+
+    productos, productos_ventas = preparar_productos_ventas()
+
+    mostrar_estadisticas(productos_ventas)
+
 
 def mostrar_menu(rol):
-
     while True:
         print("\n========================================")
         print("       NEXORA GAMING & TECHNOLOGY")
         print("========================================")
-        print("Usuario con rol:", rol)
-        print("----------------------------------------")
+        print("Rol:", rol)
 
         if rol == "Administrador":
-            print("1. Agregar producto")
+            print("\n1. Agregar producto")
             print("2. Listar productos")
             print("3. Buscar producto")
             print("4. Eliminar producto")
             print("5. Realizar venta")
-            print("6. Estadísticas")
+            print("6. Mostrar estadísticas")
             print("7. Cerrar sesión")
 
+            opcion = input("\nSeleccione una opción: ")
+
+            if opcion == "1":
+                agregar_producto()
+            elif opcion == "2":
+                listar_productos()
+            elif opcion == "3":
+                buscar_producto()
+            elif opcion == "4":
+                eliminar_producto()
+            elif opcion == "5":
+                registrar_venta()
+            elif opcion == "6":
+                ver_estadisticas()
+            elif opcion == "7":
+                print("\nCerrando sesión...")
+                break
+            else:
+                print("\nOpción no válida.")
+
         elif rol == "Vendedor":
-            print("1. Listar productos")
+            print("\n1. Listar productos")
             print("2. Buscar producto")
             print("3. Realizar venta")
-            print("4. Estadísticas")
+            print("4. Mostrar estadísticas")
             print("5. Cerrar sesión")
 
+            opcion = input("\nSeleccione una opción: ")
+
+            if opcion == "1":
+                listar_productos()
+            elif opcion == "2":
+                buscar_producto()
+            elif opcion == "3":
+                registrar_venta()
+            elif opcion == "4":
+                ver_estadisticas()
+            elif opcion == "5":
+                print("\nCerrando sesión...")
+                break
+            else:
+                print("\nOpción no válida.")
+
         elif rol == "Encargado de Inventario":
-            print("1. Agregar producto")
+            print("\n1. Agregar producto")
             print("2. Listar productos")
             print("3. Buscar producto")
             print("4. Eliminar producto")
-            print("5. Estadísticas")
+            print("5. Mostrar estadísticas")
             print("6. Cerrar sesión")
 
+            opcion = input("\nSeleccione una opción: ")
+
+            if opcion == "1":
+                agregar_producto()
+            elif opcion == "2":
+                listar_productos()
+            elif opcion == "3":
+                buscar_producto()
+            elif opcion == "4":
+                eliminar_producto()
+            elif opcion == "5":
+                ver_estadisticas()
+            elif opcion == "6":
+                print("\nCerrando sesión...")
+                break
+            else:
+                print("\nOpción no válida.")
+
         else:
-            print("Rol no reconocido.")
-            return
+            print("\nRol no reconocido.")
+            break
 
-        print("========================================")
-
-        opcion = input("Seleccione una opción: ").strip()
-
-        # OPCIONES DEL ADMINISTRADOR
-        if rol == "Administrador":
-
-            if opcion == "1":
-                agregar_producto()
-
-            elif opcion == "2":
-                listar_productos()
-
-            elif opcion == "3":
-                buscar_producto()
-
-            elif opcion == "4":
-                eliminar_producto()
-
-            elif opcion == "5":
-                realizar_venta(productos)
-
-            elif opcion == "6":
-                mostrar_estadisticas(productos)
-
-            elif opcion == "7":
-                print("Sesión cerrada correctamente.")
-                break
-
-            else:
-                print("Opción inválida.")
-
-        # OPCIONES DEL VENDEDOR
-        elif rol == "Vendedor":
-
-            if opcion == "1":
-                listar_productos()
-
-            elif opcion == "2":
-                buscar_producto()
-
-            elif opcion == "3":
-                realizar_venta(productos)
-
-            elif opcion == "4":
-                mostrar_estadisticas(productos)
-
-            elif opcion == "5":
-                print("Sesión cerrada correctamente.")
-                break
-
-            else:
-                print("Opción inválida.")
-
-        # OPCIONES DEL ENCARGADO DE INVENTARIO
-        elif rol == "Encargado de Inventario":
-
-            if opcion == "1":
-                agregar_producto()
-
-            elif opcion == "2":
-                listar_productos()
-
-            elif opcion == "3":
-                buscar_producto()
-
-            elif opcion == "4":
-                eliminar_producto()
-
-            elif opcion == "5":
-                mostrar_estadisticas(productos)
-
-            elif opcion == "6":
-                print("Sesión cerrada correctamente.")
-                break
-
-            else:
-                print("Opción inválida.")
-
-
-# ==========================================
-# PROGRAMA PRINCIPAL
-# ==========================================
 
 def main():
-    usuario, rol = iniciar_sesion()
+    # Cargar los productos guardados en el archivo CSV.
+    try:
+        inventario.cargar_productos()
+    except (OSError, ValueError, KeyError) as error:
+        print("\nError al cargar el inventario:", error)
+        return
 
-    if usuario is not None:
+    print("========================================")
+    print("       BIENVENIDO A NEXORA")
+    print("========================================")
+
+    while True:
+        usuario, rol = iniciar_sesion()
+
+        if usuario is None:
+            print("\nSaliendo del sistema...")
+            break
+
         mostrar_menu(rol)
-    else:
-        print("Acceso bloqueado. El programa finalizará.")
 
 
 if __name__ == "__main__":
