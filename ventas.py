@@ -1,79 +1,229 @@
+
 # ==========================================
-# VENTAS
+# SISTEMA PRINCIPAL
 # NEXORA GAMING & TECHNOLOGY
 # ==========================================
 
-ventas = []
+import inventario
+from usuario import iniciar_sesion
+from ventas import realizar_venta, mostrar_estadisticas
 
 
-def realizar_venta(productos):
+def agregar_producto():
+    print("\n========== AGREGAR PRODUCTO ==========")
+
+    codigo = input("Ingrese el código del producto: ")
+    nombre = input("Ingrese el nombre del producto: ")
+    precio = input("Ingrese el precio de venta: Q ")
+    stock = input("Ingrese la cantidad disponible: ")
+
+    try:
+        inventario.agregar_producto(codigo, nombre, precio, stock)
+        print("\nProducto agregado correctamente.")
+    except ValueError as error:
+        print("\nError:", error)
+    except OSError:
+        print("\nError al guardar el producto.")
+
+
+def listar_productos():
+    print("\n========== LISTA DE PRODUCTOS ==========")
+
+    productos = inventario.listar_productos()
+
+    if not productos:
+        print("No hay productos registrados.")
+        return
+
+    print("-" * 75)
+    print("{:<15} {:<30} {:>12} {:>10}".format(
+        "CODIGO", "NOMBRE", "PRECIO", "STOCK"
+    ))
+    print("-" * 75)
+
+    for producto in productos:
+        print("{:<15} {:<30} Q{:>10.2f} {:>10}".format(
+            producto["codigo"],
+            producto["nombre"][:30],
+            producto["precio"],
+            producto["stock"]
+        ))
+
+    print("-" * 75)
+
+
+def buscar_producto():
+    print("\n========== BUSCAR PRODUCTO ==========")
+
+    codigo = input("Ingrese el código del producto: ")
+    producto = inventario.buscar_producto(codigo)
+
+    if producto is None:
+        print("\nEl producto no existe.")
+        return
+
+    print("\nProducto encontrado:")
+    print("Código:", producto["codigo"])
+    print("Nombre:", producto["nombre"])
+    print("Precio: Q", format(producto["precio"], ".2f"))
+    print("Stock disponible:", producto["stock"])
+
+
+def eliminar_producto():
+    print("\n========== ELIMINAR PRODUCTO ==========")
+
+    codigo = input("Ingrese el código del producto: ")
+    producto = inventario.buscar_producto(codigo)
+
+    if producto is None:
+        print("\nEl producto no existe.")
+        return
+
+    print("\nProducto:", producto["nombre"])
+    print("Código:", producto["codigo"])
+
+    confirmar = input(
+        "¿Desea eliminarlo? (s/n): "
+    ).strip().lower()
+
+    if confirmar != "s":
+        print("\nOperación cancelada.")
+        return
+
+    try:
+        inventario.eliminar_producto(codigo)
+        print("\nProducto eliminado correctamente.")
+    except ValueError as error:
+        print("\nError:", error)
+    except OSError:
+        print("\nError al guardar los cambios.")
+
+
+def registrar_venta():
     print("\n========== REALIZAR VENTA ==========")
 
-    id_producto = input("Ingrese el ID del producto: ")
+    if not inventario.listar_productos():
+        print("No hay productos registrados.")
+        return
 
-    producto_encontrado = None
+    realizar_venta()
 
-    for producto in productos:
-        if producto[0] == id_producto:
-            producto_encontrado = producto
+
+def ver_estadisticas():
+    mostrar_estadisticas()
+
+
+def mostrar_menu(rol):
+    while True:
+        print("\n========================================")
+        print("       NEXORA GAMING & TECHNOLOGY")
+        print("========================================")
+        print("Usuario con rol:", rol)
+        print("----------------------------------------")
+
+        if rol == "Administrador":
+            print("1. Agregar producto")
+            print("2. Listar productos")
+            print("3. Buscar producto")
+            print("4. Eliminar producto")
+            print("5. Realizar venta")
+            print("6. Estadísticas")
+            print("7. Cerrar sesión")
+
+            opcion = input("\nSeleccione una opción: ")
+
+            if opcion == "1":
+                agregar_producto()
+            elif opcion == "2":
+                listar_productos()
+            elif opcion == "3":
+                buscar_producto()
+            elif opcion == "4":
+                eliminar_producto()
+            elif opcion == "5":
+                registrar_venta()
+            elif opcion == "6":
+                ver_estadisticas()
+            elif opcion == "7":
+                print("\nCerrando sesión...")
+                break
+            else:
+                print("\nOpción no válida.")
+
+        elif rol == "Vendedor":
+            print("1. Listar productos")
+            print("2. Buscar producto")
+            print("3. Realizar venta")
+            print("4. Estadísticas")
+            print("5. Cerrar sesión")
+
+            opcion = input("\nSeleccione una opción: ")
+
+            if opcion == "1":
+                listar_productos()
+            elif opcion == "2":
+                buscar_producto()
+            elif opcion == "3":
+                registrar_venta()
+            elif opcion == "4":
+                ver_estadisticas()
+            elif opcion == "5":
+                print("\nCerrando sesión...")
+                break
+            else:
+                print("\nOpción no válida.")
+
+        elif rol == "Encargado de Inventario":
+            print("1. Agregar producto")
+            print("2. Listar productos")
+            print("3. Buscar producto")
+            print("4. Eliminar producto")
+            print("5. Estadísticas")
+            print("6. Cerrar sesión")
+
+            opcion = input("\nSeleccione una opción: ")
+
+            if opcion == "1":
+                agregar_producto()
+            elif opcion == "2":
+                listar_productos()
+            elif opcion == "3":
+                buscar_producto()
+            elif opcion == "4":
+                eliminar_producto()
+            elif opcion == "5":
+                ver_estadisticas()
+            elif opcion == "6":
+                print("\nCerrando sesión...")
+                break
+            else:
+                print("\nOpción no válida.")
+
+        else:
+            print("\nRol no reconocido.")
             break
 
-    if producto_encontrado is None:
-        print("El producto no existe.")
+
+def main():
+    try:
+        inventario.cargar_productos()
+    except (OSError, ValueError, KeyError) as error:
+        print("\nError al cargar el inventario:", error)
         return
 
-    print("\nProducto:", producto_encontrado[1])
-    print("Precio: Q", producto_encontrado[3])
-    print("Stock disponible:", producto_encontrado[4])
+    print("========================================")
+    print("       BIENVENIDO A NEXORA")
+    print("========================================")
 
-    cantidad = int(input("Ingrese la cantidad a vender: "))
+    while True:
+        usuario, rol = iniciar_sesion()
 
-    if cantidad <= 0:
-        print("La cantidad debe ser mayor que 0.")
-        return
+        if usuario is None:
+            print("\nSaliendo del sistema...")
+            break
 
-    if cantidad > producto_encontrado[4]:
-        print("No hay suficiente stock.")
-        return
+        mostrar_menu(rol)
 
-    subtotal = producto_encontrado[3] * cantidad
 
-    producto_encontrado[4] = producto_encontrado[4] - cantidad
-
-    ventas.append([
-        producto_encontrado[0],
-        producto_encontrado[1],
-        cantidad,
-        subtotal
-    ])
-
-    print("\nVenta realizada correctamente.")
-    print("Producto:", producto_encontrado[1])
-    print("Cantidad:", cantidad)
-    print("Subtotal: Q", subtotal)
-    print("Stock restante:", producto_encontrado[4])
-
-def mostrar_estadisticas(productos):
-    print("\n========== ESTADISTICAS ==========")
-
-    total_productos = len(productos)
-
-    total_stock = 0
-    valor_inventario = 0
-
-    for producto in productos:
-        total_stock = total_stock + producto[4]
-        valor_inventario = valor_inventario + (producto[3] * producto[4])
-
-    total_unidades_vendidas = 0
-    total_ventas = 0
-
-    for venta in ventas:
-        total_unidades_vendidas = total_unidades_vendidas + venta[2]
-        total_ventas = total_ventas + venta[3]
-
-    print("Productos registrados:", total_productos)
-    print("Unidades en inventario:", total_stock)
-    print("Valor del inventario: Q", valor_inventario)
-    print("Unidades vendidas:", total_unidades_vendidas)
-    print("Total de ventas: Q", total_ventas)
+if __name__ == "__main__":
+    main()
