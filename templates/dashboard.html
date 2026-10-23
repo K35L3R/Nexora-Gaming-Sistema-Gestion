@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXORA | Panel principal</title>
+    <title>NEXORA | Dashboard</title>
+
     <style>
+        :root {
+            --fondo: #10172E;
+            --fondo-secundario: #151E39;
+            --panel: #1D2947;
+            --panel-hover: #263555;
+            --borde: #2C3959;
+            --morado: #7955F5;
+            --morado-claro: #A995FF;
+            --azul: #3478F6;
+            --azul-claro: #75A6FF;
+            --texto: #E5EBFA;
+            --texto-secundario: #9AAACA;
+            --verde: #48D6A0;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -12,271 +28,1263 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            color: #172b45;
-            display: flex;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--fondo);
+            color: var(--texto);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .app {
             min-height: 100vh;
         }
 
-        aside {
-            width: 235px;
-            background: #09182b;
-            color: white;
-            padding: 28px 18px;
-        }
+        /* BARRA LATERAL */
 
-        .logo {
-            color: #49c5ff;
-            font-size: 25px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            margin: 0 10px 5px;
-        }
-
-        .subtitulo {
-            color: #91a9c4;
-            font-size: 10px;
-            margin: 0 10px 35px;
-        }
-
-        .etiqueta {
-            color: #7189a4;
-            font-size: 11px;
-            margin: 25px 10px 12px;
-            text-transform: uppercase;
-        }
-
-        nav a {
-            display: block;
-            color: #d2deeb;
-            text-decoration: none;
-            padding: 13px 12px;
-            margin-bottom: 6px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        nav a:hover, nav a.activo {
-            background: #173453;
-            color: #49c5ff;
-        }
-
-        main {
-            flex: 1;
-            min-width: 0;
-        }
-
-        header {
-            background: white;
-            padding: 22px 32px;
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            width: 250px;
+            padding: 25px 17px;
+            background: #121B35;
+            border-right: 1px solid var(--borde);
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform .25s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .brand {
+            display: flex;
             align-items: center;
-            gap: 15px;
-            border-bottom: 1px solid #e2e8f0;
+            gap: 12px;
+            padding: 0 9px 28px;
+            border-bottom: 1px solid var(--borde);
         }
 
-        header p {
-            color: #64748b;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        .usuario {
-            font-size: 13px;
-            text-align: right;
-        }
-
-        .usuario span {
-            display: block;
-            color: #64748b;
-            margin-top: 5px;
-        }
-
-        .contenido {
-            padding: 32px;
-        }
-
-        .bienvenida {
-            margin-bottom: 28px;
-        }
-
-        .bienvenida p {
-            color: #64748b;
-            margin-top: 9px;
-            font-size: 14px;
-        }
-
-        .tarjetas {
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 14px;
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 20px;
+            place-items: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            box-shadow: 0 5px 20px rgba(94, 82, 245, .23);
         }
 
-        .tarjeta {
-            background: white;
-            padding: 23px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+        .brand-name {
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: #F2F4FF;
         }
 
-        .tarjeta p {
-            color: #64748b;
+        .brand-subtitle {
+            margin-top: 4px;
+            font-size: 9px;
+            letter-spacing: 1.1px;
+            color: var(--texto-secundario);
+        }
+
+        .nav-label {
+            padding: 27px 11px 12px;
+            color: #7485A8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-height: 47px;
+            padding: 12px 13px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #A6B4CF;
             font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
         }
 
-        .tarjeta h2 {
-            margin-top: 17px;
-            font-size: 28px;
+        .nav-link:hover {
+            color: #FFFFFF;
+            background: rgba(52, 120, 246, .09);
+            border-color: rgba(52, 120, 246, .12);
+        }
+
+        .nav-link.active {
+            color: #FFFFFF;
+            background: linear-gradient(
+                110deg,
+                rgba(121, 85, 245, .24),
+                rgba(52, 120, 246, .14)
+            );
+            border-color: rgba(142, 119, 255, .25);
+            box-shadow: inset 3px 0 0 var(--morado);
+        }
+
+        .nav-icon {
+            width: 23px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .system-card {
+            padding: 15px;
+            background: #1B2743;
+            border: 1px solid var(--borde);
+            border-radius: 13px;
+        }
+
+        .system-card-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #DCE5FA;
+        }
+
+        .system-card-description {
+            margin-top: 6px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .system-indicator {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 6px;
+            background: var(--verde);
+            border-radius: 50%;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    ellipse at 85% 0%,
+                    rgba(93, 66, 205, .11),
+                    transparent 33%
+                ),
+                var(--fondo);
+            transition: margin-left .25s ease;
+        }
+
+        .main.expanded {
+            margin-left: 0;
+        }
+
+        /* BARRA SUPERIOR */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: rgba(16, 23, 46, .94);
+            border-bottom: 1px solid var(--borde);
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .breadcrumb {
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: var(--texto);
+        }
+
+        /* BOTÓN DE TRES RAYITAS */
+
+        .menu-toggle {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--panel);
+            color: white;
+            font-size: 21px;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--panel-hover);
+            border-color: var(--morado);
+        }
+
+        .menu-toggle:focus-visible {
+            outline: 2px solid var(--morado-claro);
+            outline-offset: 3px;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .avatar {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 750;
+            color: #F0F3FF;
+        }
+
+        .user-role {
+            margin-top: 4px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+        }
+
+        .content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 29px 30px;
+        }
+
+        /* BIENVENIDA */
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 27px;
+        }
+
+        .eyebrow {
+            margin-bottom: 9px;
+            color: var(--morado-claro);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .page-title {
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 850;
+            letter-spacing: -1px;
+            color: #F0F3FF;
+        }
+
+        .welcome-description {
+            margin-top: 9px;
+            color: var(--texto-secundario);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .date-chip {
+            padding: 10px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: rgba(29, 41, 71, .8);
+            color: #B5C4DF;
+            font-size: 11px;
+        }
+
+        /* ENCABEZADOS DE SECCIÓN */
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 27px 0 15px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #E7EDFB;
+        }
+
+        .section-note {
+            color: #8395B5;
+            font-size: 11px;
+        }
+
+        /* ESTADÍSTICAS */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #243352, #1C2845);
+            transition: transform .2s ease, border-color .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(121, 85, 245, .6);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #AAB9D4;
+            font-size: 11px;
+            font-weight: 650;
+            line-height: 1.5;
+        }
+
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        .icon-blue {
+            color: var(--azul-claro);
+            background: rgba(52, 120, 246, .16);
+        }
+
+        .icon-purple {
+            color: #B7A5FF;
+            background: rgba(121, 85, 245, .17);
+        }
+
+        .icon-green {
+            color: #65E2B4;
+            background: rgba(72, 214, 160, .12);
+        }
+
+        .stat-value {
+            margin-top: 20px;
+            color: #F0F3FF;
+            font-size: clamp(22px, 2.3vw, 30px);
+            font-weight: 850;
+            letter-spacing: -.7px;
             overflow-wrap: anywhere;
         }
 
-        .azul {
-            color: #079bd8;
+        .stat-description {
+            margin-top: 8px;
+            color: #8496B6;
+            font-size: 10px;
         }
 
-        .seccion {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px;
-            margin-top: 25px;
+        /* PANELES */
+
+        .middle-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 17px;
+            margin-top: 23px;
         }
 
-        .seccion p {
-            color: #64748b;
-            font-size: 14px;
-            margin-top: 10px;
+        .panel {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #202D49, #1A2641);
+            box-shadow: 0 10px 28px rgba(4, 9, 25, .12);
         }
 
-        .botones {
+        .panel-header {
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
             gap: 12px;
-            margin-top: 20px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--borde);
         }
 
-        .boton {
-            display: inline-block;
-            background: #0b9ed8;
-            color: white;
-            padding: 12px 16px;
-            text-decoration: none;
-            border-radius: 8px;
+        .panel-title {
+            color: #E9EEFC;
             font-size: 13px;
+            font-weight: 800;
         }
 
-        .secundario {
-            background: #e7f5fc;
-            color: #0879a9;
+        .panel-description {
+            margin-top: 5px;
+            color: var(--texto-secundario);
+            font-size: 10px;
         }
 
-        .salir {
-            color: #ffb7bd;
+        .panel-tag {
+            flex-shrink: 0;
+            padding: 6px 9px;
+            border-radius: 7px;
+            border: 1px solid rgba(121, 85, 245, .2);
+            background: rgba(121, 85, 245, .13);
+            color: #C1B5FF;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .6px;
         }
 
-        @media (max-width: 850px) {
-            body {
+        /* INGRESOS */
+
+        .revenue-content {
+            padding: 23px;
+            background: radial-gradient(
+                ellipse at 100% 0%,
+                rgba(121, 85, 245, .12),
+                transparent 55%
+            );
+        }
+
+        .revenue-label {
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .revenue-value {
+            margin-top: 10px;
+            color: #F0F3FF;
+            font-size: clamp(27px, 3vw, 36px);
+            font-weight: 850;
+            letter-spacing: -1px;
+            overflow-wrap: anywhere;
+        }
+
+        .revenue-status {
+            margin-top: 10px;
+            color: var(--verde);
+            font-size: 10px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 9px;
+            height: 91px;
+            margin-top: 22px;
+        }
+
+        .chart-bars span {
+            flex: 1;
+            min-width: 4px;
+            height: var(--altura);
+            border-radius: 5px 5px 2px 2px;
+            background: linear-gradient(
+                180deg,
+                #A08AFF,
+                #7355F4 55%,
+                #3478F6
+            );
+            opacity: .8;
+            transition: opacity .2s ease;
+        }
+
+        .chart-bars span:hover {
+            opacity: 1;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 9px;
+            color: #8496B6;
+            font-size: 9px;
+        }
+
+        /* ACCESOS RÁPIDOS */
+
+        .quick-links {
+            padding: 7px 13px 13px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 8px;
+            border-bottom: 1px solid var(--borde);
+            border-radius: 9px;
+            transition: background .2s ease;
+        }
+
+        .quick-link:last-child {
+            border-bottom: none;
+        }
+
+        .quick-link:hover {
+            background: rgba(121, 85, 245, .09);
+        }
+
+        .quick-icon {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 17px;
+        }
+
+        .quick-title {
+            color: #E1E9FA;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .quick-description {
+            margin-top: 4px;
+            color: #91A2C0;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .quick-arrow {
+            margin-left: auto;
+            color: #98A8C6;
+            font-size: 19px;
+        }
+
+        /* TABLA DE VENTAS */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .sales-table {
+            width: 100%;
+            min-width: 570px;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .sales-table th {
+            padding: 13px 18px;
+            text-align: left;
+            background: rgba(12, 20, 41, .24);
+            color: #95A6C4;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .sales-table td {
+            padding: 14px 18px;
+            border-top: 1px solid var(--borde);
+            color: #D7E1F4;
+            vertical-align: middle;
+        }
+
+        .sales-table tbody tr {
+            transition: background .15s ease;
+        }
+
+        .sales-table tbody tr:hover {
+            background: rgba(52, 120, 246, .06);
+        }
+
+        .product-code {
+            display: inline-block;
+            margin-bottom: 5px;
+            padding: 4px 7px;
+            border-radius: 6px;
+            background: rgba(121, 85, 245, .14);
+            color: #BDAFFF;
+            font-size: 9px;
+        }
+
+        .product-name {
+            display: block;
+            color: #DDE6F8;
+            font-weight: 700;
+        }
+
+        .sale-user {
+            color: #AAB9D3;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: 7px;
+            background: rgba(72, 214, 160, .10);
+            color: #70E5B9;
+            font-size: 9px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .status::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--verde);
+        }
+
+        .empty-state {
+            padding: 35px 20px;
+            text-align: center;
+            color: var(--texto-secundario);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .empty-icon {
+            margin-bottom: 10px;
+            color: var(--morado-claro);
+            font-size: 27px;
+        }
+
+        .view-all {
+            color: #B9ACFF;
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+        .view-all:hover {
+            color: #FFFFFF;
+        }
+
+        /* PIE DE PÁGINA */
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 0 5px;
+            color: #7183A3;
+            font-size: 10px;
+        }
+
+        .footer-brand {
+            color: #A995FF;
+            font-weight: 850;
+            letter-spacing: 1.2px;
+        }
+
+        /* FONDO OSCURO PARA EL MENÚ MÓVIL */
+
+        .overlay {
+            display: none;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .middle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* TELÉFONOS Y PANTALLAS PEQUEÑAS */
+
+        @media (max-width: 760px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main,
+            .main.expanded {
+                margin-left: 0;
+            }
+
+            .overlay.show {
                 display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 900;
+                background: rgba(2, 6, 20, .65);
             }
 
-            aside {
-                width: 100%;
+            .topbar {
+                padding: 13px 16px;
             }
 
-            nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 5px;
+            .content {
+                padding: 22px 15px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
             }
 
-            .etiqueta {
+            .stat-card {
+                padding: 13px;
+                border-radius: 13px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .stat-icon {
+                width: 31px;
+                height: 31px;
+                font-size: 15px;
+            }
+
+            .stat-value {
+                margin-top: 15px;
+                font-size: 22px;
+            }
+
+            .stat-description {
+                font-size: 9px;
+                line-height: 1.5;
+            }
+
+            .topbar-user {
+                gap: 7px;
+            }
+
+            .user-name {
+                max-width: 100px;
+                overflow-wrap: anywhere;
+            }
+
+            .date-chip {
                 display: none;
             }
 
-            .tarjetas {
-                grid-template-columns: 1fr;
+            .panel-header {
+                padding: 15px;
             }
 
-            .contenido {
-                padding: 20px;
+            .revenue-content {
+                padding: 17px;
             }
+        }
 
-            header {
-                padding: 20px;
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
             }
         }
     </style>
 </head>
+
 <body>
-    <aside>
-        <div class="logo">NEXORA</div>
-        <div class="subtitulo">GAMING & TECHNOLOGY</div>
+<div class="app">
 
-        <nav>
-            <div class="etiqueta">Menú principal</div>
-            <a href="{{ url_for('dashboard') }}" class="activo">▦ &nbsp; Panel principal</a>
-            <a href="{{ url_for('ver_inventario') }}">▤ &nbsp; Inventario</a>
-            <a href="#">▣ &nbsp; Ventas</a>
-            <a href="#">▥ &nbsp; Estadísticas</a>
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar" id="sidebar">
 
-            <div class="etiqueta">Cuenta</div>
-            <a href="{{ url_for('cerrar_sesion') }}" class="salir">↪ &nbsp; Cerrar sesión</a>
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <div class="brand-logo">N</div>
+            <div>
+                <div class="brand-name">NEXORA</div>
+                <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
+            </div>
+        </a>
+
+        <div class="nav-label">MENÚ PRINCIPAL</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link active">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ver_inventario') }}" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span>Inventario</span>
+            </a>
+
+            <a href="{{ url_for('ver_ventas') }}" class="nav-link">
+                <span class="nav-icon">↗</span>
+                <span>Ventas</span>
+            </a>
+
+            <a href="{{ url_for('ver_estadisticas') }}" class="nav-link">
+                <span class="nav-icon">◫</span>
+                <span>Estadísticas</span>
+            </a>
         </nav>
+
+        <div class="nav-label">CUENTA</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('cerrar_sesion') }}" class="nav-link">
+                <span class="nav-icon">⇥</span>
+                <span>Cerrar sesión</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-card">
+                <div class="system-card-title">
+                    <span class="system-indicator"></span>
+                    Sistema de gestión
+                </div>
+                <div class="system-card-description">
+                    NEXORA Gaming & Technology<br>
+                    Panel de administración
+                </div>
+            </div>
+        </div>
     </aside>
 
-    <main>
-        <header>
-            <div>
-                <h3>Panel principal</h3>
-                <p>Sistema de gestión empresarial</p>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main" id="main">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle"
+                    aria-label="Ocultar menú"
+                    aria-expanded="true"
+                    aria-controls="sidebar">
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+                    Inicio / <strong>Dashboard</strong>
+                </div>
             </div>
 
-            <div class="usuario">
-                {{ usuario }}
-                <span>{{ rol }}</span>
+            <div class="topbar-user">
+                <div class="avatar">
+                    {{ usuario[0]|upper if usuario else 'N' }}
+                </div>
+                <div>
+                    <div class="user-name">{{ usuario }}</div>
+                    <div class="user-role">{{ rol }}</div>
+                </div>
             </div>
         </header>
 
-        <div class="contenido">
-            <section class="bienvenida">
-                <h1>¡Bienvenido, {{ usuario }}!</h1>
-                <p>Este es el resumen general de NEXORA.</p>
-            </section>
+        <div class="content">
 
-            <section class="tarjetas">
-                <div class="tarjeta">
-                    <p>Productos registrados</p>
-                    <h2>{{ total_productos }}</h2>
+            <!-- BIENVENIDA -->
+            <section class="welcome">
+                <div>
+                    <div class="eyebrow">NEXORA / CENTRO DE CONTROL</div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="welcome-description">
+                        Bienvenido al centro de gestión de tu tienda tecnológica.
+                    </p>
                 </div>
 
-                <div class="tarjeta">
-                    <p>Unidades disponibles</p>
-                    <h2 class="azul">{{ unidades }}</h2>
-                </div>
-
-                <div class="tarjeta">
-                    <p>Valor del inventario</p>
-                    <h2>Q {{ "%.2f"|format(valor_inventario) }}</h2>
+                <div class="date-chip">
+                    ◆ Panel de administración
                 </div>
             </section>
 
-            <section class="seccion">
-                <h3>Accesos rápidos</h3>
-                <p>Seleccioná una opción para administrar los productos del negocio.</p>
+            <!-- RESUMEN GENERAL -->
+            <div class="section-heading">
+                <h2 class="section-title">Resumen general</h2>
+                <span class="section-note">Indicadores del sistema</span>
+            </div>
 
-                <div class="botones">
-                    <a class="boton" href="{{ url_for('ver_inventario') }}">
-                        Administrar inventario
+            <section class="stats-grid">
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Productos registrados</span>
+                        <span class="stat-icon icon-blue">▦</span>
+                    </div>
+                    <div class="stat-value">{{ total_productos }}</div>
+                    <div class="stat-description">Productos en el catálogo</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Unidades disponibles</span>
+                        <span class="stat-icon icon-purple">▤</span>
+                    </div>
+                    <div class="stat-value">{{ unidades }}</div>
+                    <div class="stat-description">Existencias registradas</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Valor del inventario</span>
+                        <span class="stat-icon icon-blue">Q</span>
+                    </div>
+                    <div class="stat-value">
+                        Q {{ "%.2f"|format(valor_inventario|float) }}
+                    </div>
+                    <div class="stat-description">Valor actual del inventario</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Ventas realizadas</span>
+                        <span class="stat-icon icon-green">↗</span>
+                    </div>
+                    <div class="stat-value">
+                        {{ estadisticas.cantidad_ventas }}
+                    </div>
+                    <div class="stat-description">Operaciones registradas</div>
+                </article>
+
+            </section>
+
+            <!-- INGRESOS Y ACCESOS -->
+            <section class="middle-grid">
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Rendimiento de ventas</h2>
+                            <p class="panel-description">
+                                Resumen de ingresos registrados
+                            </p>
+                        </div>
+                        <span class="panel-tag">INGRESOS</span>
+                    </div>
+
+                    <div class="revenue-content">
+                        <div class="revenue-label">Ingresos acumulados</div>
+
+                        <div class="revenue-value">
+                            Q {{ "%.2f"|format(estadisticas.ingresos|float) }}
+                        </div>
+
+                        <div class="revenue-status">
+                            ● Datos registrados en el sistema
+                        </div>
+
+                        <!-- Barras decorativas, no representan datos diarios -->
+                        <div class="chart-bars" aria-hidden="true">
+                            <span style="--altura:34%"></span>
+                            <span style="--altura:48%"></span>
+                            <span style="--altura:40%"></span>
+                            <span style="--altura:65%"></span>
+                            <span style="--altura:52%"></span>
+                            <span style="--altura:76%"></span>
+                            <span style="--altura:61%"></span>
+                            <span style="--altura:90%"></span>
+                            <span style="--altura:70%"></span>
+                            <span style="--altura:100%"></span>
+                            <span style="--altura:81%"></span>
+                            <span style="--altura:94%"></span>
+                        </div>
+
+                        <div class="chart-labels">
+                            <span>NEXORA</span>
+                            <span>Resumen general</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Accesos rápidos</h2>
+                            <p class="panel-description">Administrá tu tienda</p>
+                        </div>
+                        <span class="panel-tag">MENÚ</span>
+                    </div>
+
+                    <div class="quick-links">
+
+                        <a href="{{ url_for('ver_inventario') }}" class="quick-link">
+                            <span class="quick-icon icon-blue">▦</span>
+                            <span>
+                                <span class="quick-title">Inventario</span>
+                                <span class="quick-description" style="display:block">
+                                    Consultá y administrá tus productos
+                                </span>
+                            </span>
+                            <span class="quick-arrow">›</span>
+                        </a>
+
+                        <a href="{{ url_for('ver_ventas') }}" class="quick-link">
+                            <span class="quick-icon icon-purple">↗</span>
+                            <span>
+                                <span class="quick-title">Ventas</span>
+                                <span class="quick-description" style="display:block">
+                                    Accedé a las operaciones de venta
+                                </span>
+                            </span>
+                            <span class="quick-arrow">›</span>
+                        </a>
+
+                        <a href="{{ url_for('ver_estadisticas') }}" class="quick-link">
+                            <span class="quick-icon icon-green">◫</span>
+                            <span>
+                                <span class="quick-title">Estadísticas</span>
+                                <span class="quick-description" style="display:block">
+                                    Consultá los resultados del negocio
+                                </span>
+                            </span>
+                            <span class="quick-arrow">›</span>
+                        </a>
+
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- VENTAS RECIENTES -->
+            <div class="section-heading">
+                <h2 class="section-title">Actividad reciente</h2>
+                <span class="section-note">Últimas operaciones registradas</span>
+            </div>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Ventas recientes</h2>
+                        <p class="panel-description">
+                            Consulta rápida de las últimas ventas
+                        </p>
+                    </div>
+
+                    <a href="{{ url_for('ver_ventas') }}" class="view-all">
+                        Ver todas →
                     </a>
-
-                    <a class="boton secundario" href="{{ url_for('cerrar_sesion') }}">
-                        Cerrar sesión
-                    </a>
                 </div>
+
+                {% if estadisticas.ventas %}
+
+                <div class="table-wrap">
+                    <table class="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Fecha</th>
+                                <th>Cantidad</th>
+                                <th>Vendedor</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for venta in estadisticas.ventas[-5:]|reverse %}
+                            <tr>
+                                <td>
+                                    <span class="product-code">
+                                        {{ venta.codigo }}
+                                    </span>
+                                    <span class="product-name">
+                                        {{ venta.producto }}
+                                    </span>
+                                </td>
+
+                                <td>{{ venta.fecha }}</td>
+                                <td>{{ venta.cantidad }}</td>
+                                <td class="sale-user">{{ venta.usuario }}</td>
+
+                                <td>
+                                    <strong>
+                                        Q {{ "%.2f"|format(venta.total|float) }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <span class="status">Registrada</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <div class="empty-icon">◈</div>
+                    <div>No hay ventas registradas todavía.</div>
+                    <div>
+                        Cuando realicés una venta, aparecerá en esta sección.
+                    </div>
+                </div>
+
+                {% endif %}
             </section>
+
+            <!-- PIE DE PÁGINA -->
+            <footer class="footer">
+                <div>
+                    <span class="footer-brand">NEXORA</span>
+                    GAMING & TECHNOLOGY
+                </div>
+                <div>Panel de gestión del negocio</div>
+            </footer>
+
         </div>
     </main>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const menuToggle = document.getElementById("menuToggle");
+    const main = document.getElementById("main");
+
+    function actualizarEstadoBoton() {
+        const esMovil = window.innerWidth <= 760;
+        const estaAbierto = sidebar.classList.contains("open");
+        const estaOculto = sidebar.classList.contains("hidden");
+
+        if (esMovil) {
+            menuToggle.setAttribute("aria-expanded", estaAbierto);
+            menuToggle.setAttribute(
+                "aria-label",
+                estaAbierto ? "Cerrar menú" : "Abrir menú"
+            );
+        } else {
+            menuToggle.setAttribute("aria-expanded", !estaOculto);
+            menuToggle.setAttribute(
+                "aria-label",
+                estaOculto ? "Mostrar menú" : "Ocultar menú"
+            );
+        }
+    }
+
+    function abrirMenuMovil() {
+        sidebar.classList.remove("hidden");
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+        actualizarEstadoBoton();
+    }
+
+    function cerrarMenuMovil() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        actualizarEstadoBoton();
+    }
+
+    menuToggle.addEventListener("click", function () {
+        if (window.innerWidth <= 760) {
+            if (sidebar.classList.contains("open")) {
+                cerrarMenuMovil();
+            } else {
+                abrirMenuMovil();
+            }
+        } else {
+            sidebar.classList.toggle("hidden");
+
+            const oculto = sidebar.classList.contains("hidden");
+            main.classList.toggle("expanded", oculto);
+
+            actualizarEstadoBoton();
+        }
+    });
+
+    overlay.addEventListener("click", cerrarMenuMovil);
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            cerrarMenuMovil();
+        }
+    });
+
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 760) {
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+
+            const oculto = sidebar.classList.contains("hidden");
+            main.classList.toggle("expanded", oculto);
+        } else {
+            sidebar.classList.remove("hidden");
+            main.classList.remove("expanded");
+        }
+
+        actualizarEstadoBoton();
+    });
+
+    actualizarEstadoBoton();
+</script>
+
 </body>
 </html>
