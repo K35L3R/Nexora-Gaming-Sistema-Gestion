@@ -5,271 +5,1558 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXORA | Inventario</title>
+
     <style>
+        :root {
+            --fondo: #10172E;
+            --fondo-secundario: #151E39;
+            --panel: #1D2947;
+            --panel-hover: #263555;
+            --borde: #2C3959;
+            --morado: #7955F5;
+            --morado-claro: #A995FF;
+            --azul: #3478F6;
+            --azul-claro: #75A6FF;
+            --texto: #E5EBFA;
+            --texto-secundario: #9AAACA;
+            --verde: #48D6A0;
+            --rojo: #FF7185;
+            --amarillo: #FFD166;
+        }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            color: #172b45;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--fondo);
+            color: var(--texto);
         }
 
-        header {
-            background: #09182b;
-            color: white;
-            padding: 22px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        header h1 {
-            margin: 0;
-            color: #49c5ff;
-            font-size: 24px;
-        }
-
-        header a {
-            color: white;
+        a {
+            color: inherit;
             text-decoration: none;
-            margin-left: 18px;
-            font-size: 14px;
         }
 
-        main {
-            max-width: 1150px;
-            margin: 35px auto;
-            padding: 0 20px;
-        }
-
-        .encabezado {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .encabezado p {
-            color: #64748b;
-            margin-bottom: 0;
-        }
-
-        .panel {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-        }
-
-        .formulario {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 15px;
-            align-items: end;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
+        button,
         input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
+            font: inherit;
         }
 
         button {
-            padding: 12px 16px;
-            border: 0;
-            border-radius: 7px;
-            background: #079bd8;
-            color: white;
-            font-weight: bold;
             cursor: pointer;
         }
 
-        .formulario button {
+        /* BARRA LATERAL */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            width: 250px;
+            padding: 25px 17px;
+            background: #121B35;
+            border-right: 1px solid var(--borde);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform .25s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 9px 28px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            box-shadow: 0 5px 20px rgba(94, 82, 245, .23);
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: #F2F4FF;
+        }
+
+        .brand-subtitle {
+            margin-top: 4px;
+            font-size: 9px;
+            letter-spacing: 1.1px;
+            color: var(--texto-secundario);
+        }
+
+        .nav-label {
+            padding: 27px 11px 12px;
+            color: #7485A8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-height: 47px;
+            padding: 12px 13px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #A6B4CF;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            background: rgba(52, 120, 246, .09);
+            border-color: rgba(52, 120, 246, .12);
+        }
+
+        .nav-link.active {
+            color: #FFFFFF;
+            background: linear-gradient(
+                110deg,
+                rgba(121, 85, 245, .24),
+                rgba(52, 120, 246, .14)
+            );
+            border-color: rgba(142, 119, 255, .25);
+            box-shadow: inset 3px 0 0 var(--morado);
+        }
+
+        .nav-icon {
+            width: 23px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .system-card {
+            padding: 15px;
+            background: #1B2743;
+            border: 1px solid var(--borde);
+            border-radius: 13px;
+        }
+
+        .system-card-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #DCE5FA;
+        }
+
+        .system-card-description {
+            margin-top: 6px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .system-indicator {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 6px;
+            background: var(--verde);
+            border-radius: 50%;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    ellipse at 85% 0%,
+                    rgba(93, 66, 205, .11),
+                    transparent 33%
+                ),
+                var(--fondo);
+            transition: margin-left .25s ease;
+        }
+
+        .main.expanded {
+            margin-left: 0;
+        }
+
+        /* BARRA SUPERIOR */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: rgba(16, 23, 46, .94);
+            border-bottom: 1px solid var(--borde);
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .breadcrumb {
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: var(--texto);
+        }
+
+        .menu-toggle {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--panel);
+            color: white;
+            font-size: 21px;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--panel-hover);
+            border-color: var(--morado);
+        }
+
+        .menu-toggle:focus-visible {
+            outline: 2px solid var(--morado-claro);
+            outline-offset: 3px;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 0;
+        }
+
+        .avatar {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 750;
+            color: #F0F3FF;
+            overflow-wrap: anywhere;
+        }
+
+        .user-role {
+            margin-top: 4px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+        }
+
+        .content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 29px 30px;
+        }
+
+        /* ENCABEZADO */
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 27px;
+        }
+
+        .eyebrow {
+            margin-bottom: 9px;
+            color: var(--morado-claro);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .page-title {
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 850;
+            letter-spacing: -1px;
+            color: #F0F3FF;
+        }
+
+        .welcome-description {
+            margin-top: 9px;
+            color: var(--texto-secundario);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .date-chip {
+            padding: 10px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: rgba(29, 41, 71, .8);
+            color: #B5C4DF;
+            font-size: 11px;
+        }
+
+        /* MENSAJES */
+
+        .flash-list {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 13px 16px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--texto);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .flash.success {
+            border-color: rgba(72, 214, 160, .35);
+            background: rgba(72, 214, 160, .08);
+            color: #80E8BE;
+        }
+
+        .flash.error {
+            border-color: rgba(255, 113, 133, .35);
+            background: rgba(255, 113, 133, .08);
+            color: #FF9AA9;
+        }
+
+        .flash.warning {
+            border-color: rgba(255, 209, 102, .35);
+            background: rgba(255, 209, 102, .08);
+            color: #FFE09A;
+        }
+
+        /* ESTADÍSTICAS */
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 27px 0 15px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #E7EDFB;
+        }
+
+        .section-note {
+            color: #8395B5;
+            font-size: 11px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #243352, #1C2845);
+            transition: transform .2s ease, border-color .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(121, 85, 245, .6);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #AAB9D4;
+            font-size: 11px;
+            font-weight: 650;
+            line-height: 1.5;
+        }
+
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        .icon-blue {
+            color: var(--azul-claro);
+            background: rgba(52, 120, 246, .16);
+        }
+
+        .icon-purple {
+            color: #B7A5FF;
+            background: rgba(121, 85, 245, .17);
+        }
+
+        .icon-green {
+            color: #65E2B4;
+            background: rgba(72, 214, 160, .12);
+        }
+
+        .stat-value {
+            margin-top: 20px;
+            color: #F0F3FF;
+            font-size: clamp(22px, 2.3vw, 30px);
+            font-weight: 850;
+            letter-spacing: -.7px;
+            overflow-wrap: anywhere;
+        }
+
+        .stat-description {
+            margin-top: 8px;
+            color: #8496B6;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        /* PANELES */
+
+        .panel {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #202D49, #1A2641);
+            box-shadow: 0 10px 28px rgba(4, 9, 25, .12);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .panel-title {
+            color: #E9EEFC;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .panel-description {
+            margin-top: 5px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .panel-tag {
+            flex-shrink: 0;
+            padding: 6px 9px;
+            border-radius: 7px;
+            border: 1px solid rgba(121, 85, 245, .2);
+            background: rgba(121, 85, 245, .13);
+            color: #C1B5FF;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .6px;
+        }
+
+        .panel-body {
+            padding: 22px;
+        }
+
+        /* FORMULARIO */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .form-group.full {
             grid-column: 1 / -1;
         }
 
-        .mensaje {
-            padding: 13px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background: #e0f2fe;
-            color: #075985;
+        .form-label {
+            color: #C7D3EA;
+            font-size: 11px;
+            font-weight: 750;
         }
 
-        .tabla-contenedor {
+        .form-input {
+            width: 100%;
+            min-height: 44px;
+            padding: 12px 13px;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            outline: none;
+            background: #141F38;
+            color: var(--texto);
+            font-size: 12px;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #7082A3;
+        }
+
+        .form-input:focus {
+            border-color: var(--morado);
+            box-shadow: 0 0 0 3px rgba(121, 85, 245, .13);
+        }
+
+        .form-help {
+            color: #8395B5;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 41px;
+            padding: 11px 16px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 800;
+            transition: background .2s ease, border-color .2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(110deg, var(--morado), var(--azul));
+            color: white;
+            box-shadow: 0 5px 15px rgba(52, 120, 246, .15);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            border-color: var(--borde);
+            background: var(--panel);
+            color: #C8D5EC;
+        }
+
+        .btn-secondary:hover {
+            background: var(--panel-hover);
+            border-color: var(--morado);
+        }
+
+        .btn-danger {
+            border-color: rgba(255, 113, 133, .28);
+            background: rgba(255, 113, 133, .09);
+            color: #FF9AA9;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 113, 133, .17);
+            border-color: var(--rojo);
+        }
+
+        .btn-small {
+            min-height: 32px;
+            padding: 7px 10px;
+            font-size: 10px;
+        }
+
+        /* BÚSQUEDA Y TABLA */
+
+        .table-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 17px 20px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 180px;
+            max-width: 380px;
+        }
+
+        .search-input {
+            width: 100%;
+            min-height: 40px;
+            padding: 10px 13px 10px 37px;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            outline: none;
+            background: #141F38;
+            color: var(--texto);
+            font-size: 11px;
+        }
+
+        .search-input:focus {
+            border-color: var(--morado);
+            box-shadow: 0 0 0 3px rgba(121, 85, 245, .12);
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 13px;
+            transform: translateY(-50%);
+            color: #91A2C0;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        .result-count {
+            color: var(--texto-secundario);
+            font-size: 10px;
+        }
+
+        .table-wrap {
+            width: 100%;
             overflow-x: auto;
         }
 
-        table {
+        .inventory-table {
             width: 100%;
+            min-width: 690px;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 11px;
         }
 
-        th, td {
+        .inventory-table th {
+            padding: 14px 17px;
             text-align: left;
-            padding: 14px 12px;
-            border-bottom: 1px solid #e2e8f0;
+            background: rgba(12, 20, 41, .24);
+            color: #95A6C4;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        th {
-            background: #f8fafc;
-            color: #475569;
+        .inventory-table td {
+            padding: 15px 17px;
+            border-top: 1px solid var(--borde);
+            color: #D7E1F4;
+            vertical-align: middle;
         }
 
-        .eliminar {
-            background: #dc3545;
-            padding: 8px 11px;
+        .inventory-table tbody tr {
+            transition: background .15s ease;
         }
 
-        .vacio {
+        .inventory-table tbody tr:hover {
+            background: rgba(52, 120, 246, .06);
+        }
+
+        .product-code {
+            display: inline-block;
+            padding: 5px 7px;
+            border-radius: 6px;
+            background: rgba(121, 85, 245, .14);
+            color: #BDAFFF;
+            font-size: 9px;
+            overflow-wrap: anywhere;
+        }
+
+        .product-name {
+            color: #E0E8F9;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .product-price {
+            color: #B9ACFF;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: 7px;
+            background: rgba(72, 214, 160, .10);
+            color: #70E5B9;
+            font-size: 9px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .stock-badge.low {
+            background: rgba(255, 209, 102, .10);
+            color: #FFE09A;
+        }
+
+        .stock-badge.empty {
+            background: rgba(255, 113, 133, .10);
+            color: #FF9AA9;
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .delete-form {
+            display: inline;
+        }
+
+        .empty-state {
+            padding: 38px 20px;
             text-align: center;
-            color: #64748b;
-            padding: 25px;
+            color: var(--texto-secundario);
+            font-size: 12px;
+            line-height: 1.8;
         }
 
-        @media (max-width: 750px) {
-            .formulario {
-                grid-template-columns: 1fr 1fr;
+        .empty-icon {
+            margin-bottom: 12px;
+            color: var(--morado-claro);
+            font-size: 29px;
+        }
+
+        .empty-title {
+            margin-bottom: 5px;
+            color: #DDE6F8;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .hidden-row {
+            display: none;
+        }
+
+        /* PIE DE PÁGINA */
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 0 5px;
+            color: #7183A3;
+            font-size: 10px;
+        }
+
+        .footer-brand {
+            color: #A995FF;
+            font-weight: 850;
+            letter-spacing: 1.2px;
+        }
+
+        /* MENÚ MÓVIL */
+
+        .overlay {
+            display: none;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 950px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* TELÉFONOS */
+
+        @media (max-width: 760px) {
+            .sidebar {
+                transform: translateX(-100%);
             }
 
-            header a {
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main,
+            .main.expanded {
                 margin-left: 0;
-                margin-right: 12px;
+            }
+
+            .overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 900;
+                background: rgba(2, 6, 20, .65);
+            }
+
+            .topbar {
+                padding: 13px 16px;
+            }
+
+            .content {
+                padding: 22px 15px;
+            }
+
+            .panel-body {
+                padding: 17px;
+            }
+
+            .table-tools {
+                padding: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
             }
         }
 
-        @media (max-width: 450px) {
-            .formulario {
-                grid-template-columns: 1fr;
+        @media (max-width: 460px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .stat-card {
+                padding: 13px;
+                border-radius: 13px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .stat-icon {
+                width: 31px;
+                height: 31px;
+                font-size: 15px;
+            }
+
+            .stat-value {
+                margin-top: 15px;
+                font-size: 22px;
+            }
+
+            .stat-description {
+                font-size: 9px;
+                line-height: 1.5;
+            }
+
+            .topbar-user {
+                gap: 7px;
+            }
+
+            .user-name {
+                max-width: 100px;
+                overflow-wrap: anywhere;
+            }
+
+            .user-role {
+                max-width: 100px;
+                overflow-wrap: anywhere;
+            }
+
+            .panel-header {
+                padding: 15px;
+            }
+
+            .breadcrumb {
+                font-size: 10px;
+            }
+
+            .date-chip {
+                font-size: 10px;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            .search-box {
+                max-width: none;
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
             }
         }
     </style>
 </head>
+
 <body>
-    <header>
-        <div>
-            <h1>NEXORA</h1>
-            <small>GAMING & TECHNOLOGY</small>
-        </div>
+<div class="app">
 
-        <nav>
-            <a href="{{ url_for('dashboard') }}">Panel principal</a>
-            <a href="{{ url_for('ver_inventario') }}">Inventario</a>
-            <a href="{{ url_for('cerrar_sesion') }}">Cerrar sesión</a>
-        </nav>
-    </header>
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar" id="sidebar">
 
-    <main>
-        <section class="encabezado">
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <div class="brand-logo">N</div>
             <div>
-                <h2>Gestión de inventario</h2>
-                <p>Registrá y administrá los productos del negocio.</p>
+                <div class="brand-name">NEXORA</div>
+                <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
             </div>
-            <strong>Usuario: {{ usuario }} · {{ rol }}</strong>
-        </section>
+        </a>
 
-        {% with mensajes = get_flashed_messages() %}
-            {% if mensajes %}
-                {% for mensaje in mensajes %}
-                    <div class="mensaje">{{ mensaje }}</div>
-                {% endfor %}
+        <div class="nav-label">MENÚ PRINCIPAL</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ver_inventario') }}" class="nav-link active">
+                <span class="nav-icon">▦</span>
+                <span>Inventario</span>
+            </a>
+
+            <a href="{{ url_for('ver_ventas') }}" class="nav-link">
+                <span class="nav-icon">↗</span>
+                <span>Ventas</span>
+            </a>
+
+            <a href="{{ url_for('ver_estadisticas') }}" class="nav-link">
+                <span class="nav-icon">◫</span>
+                <span>Estadísticas</span>
+            </a>
+        </nav>
+
+        <div class="nav-label">CUENTA</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('cerrar_sesion') }}" class="nav-link">
+                <span class="nav-icon">⇥</span>
+                <span>Cerrar sesión</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-card">
+                <div class="system-card-title">
+                    <span class="system-indicator"></span>
+                    Sistema de gestión
+                </div>
+                <div class="system-card-description">
+                    NEXORA Gaming & Technology<br>
+                    Panel de administración
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main" id="main">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle"
+                    aria-label="Ocultar menú"
+                    aria-expanded="true"
+                    aria-controls="sidebar">
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+                    Inicio / <strong>Inventario</strong>
+                </div>
+            </div>
+
+            <div class="topbar-user">
+                <div class="avatar">
+                    {{ usuario[0]|upper if usuario else 'N' }}
+                </div>
+                <div>
+                    <div class="user-name">{{ usuario }}</div>
+                    <div class="user-role">{{ rol }}</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- ENCABEZADO -->
+            <section class="welcome">
+                <div>
+                    <div class="eyebrow">NEXORA / CONTROL DE PRODUCTOS</div>
+                    <h1 class="page-title">Inventario</h1>
+                    <p class="welcome-description">
+                        Consultá, registrá y administrá los productos de tu tienda tecnológica.
+                    </p>
+                </div>
+
+                <div class="date-chip">
+                    ◆ Gestión de inventario
+                </div>
+            </section>
+
+            <!-- MENSAJES DE FLASK -->
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    <div class="flash-list">
+                        {% for categoria, mensaje in mensajes %}
+                            <div class="flash {{ categoria }}">
+                                {{ mensaje }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- RESUMEN -->
+            {% set unidades_totales = productos | sum(attribute='stock') %}
+            {% set valor_total = namespace(total=0) %}
+            {% for producto in productos %}
+                {% set valor_total.total = valor_total.total + (producto.precio|float * producto.stock|int) %}
+            {% endfor %}
+
+            <div class="section-heading">
+                <h2 class="section-title">Resumen del inventario</h2>
+                <span class="section-note">Indicadores de existencias</span>
+            </div>
+
+            <section class="stats-grid">
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Productos registrados</span>
+                        <span class="stat-icon icon-blue">▦</span>
+                    </div>
+                    <div class="stat-value">{{ productos|length }}</div>
+                    <div class="stat-description">Productos en el catálogo</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Unidades disponibles</span>
+                        <span class="stat-icon icon-purple">▤</span>
+                    </div>
+                    <div class="stat-value">{{ unidades_totales }}</div>
+                    <div class="stat-description">Unidades registradas en stock</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Valor del inventario</span>
+                        <span class="stat-icon icon-green">Q</span>
+                    </div>
+                    <div class="stat-value">
+                        Q {{ "%.2f"|format(valor_total.total) }}
+                    </div>
+                    <div class="stat-description">Precio de venta por existencias</div>
+                </article>
+
+            </section>
+
+            <!-- AGREGAR PRODUCTO -->
+            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+
+            <div class="section-heading">
+                <h2 class="section-title">Administración de productos</h2>
+                <span class="section-note">Registro de artículos</span>
+            </div>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Agregar producto</h2>
+                        <p class="panel-description">
+                            Completá los datos para registrar un producto nuevo.
+                        </p>
+                    </div>
+                    <span class="panel-tag">NUEVO PRODUCTO</span>
+                </div>
+
+                <div class="panel-body">
+                    <form
+                        action="{{ url_for('ver_inventario') }}"
+                        method="POST"
+                        id="productForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label class="form-label" for="codigo">
+                                    Código del producto
+                                </label>
+                                <input
+                                    class="form-input"
+                                    type="text"
+                                    id="codigo"
+                                    name="codigo"
+                                    placeholder="Ej. GPU-001"
+                                    maxlength="50"
+                                    required>
+                                <span class="form-help">
+                                    Utilizá un código único para identificarlo.
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="nombre">
+                                    Nombre del producto
+                                </label>
+                                <input
+                                    class="form-input"
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    placeholder="Ej. Tarjeta gráfica RTX 4060"
+                                    maxlength="150"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="precio">
+                                    Precio de venta (Q)
+                                </label>
+                                <input
+                                    class="form-input"
+                                    type="number"
+                                    id="precio"
+                                    name="precio"
+                                    placeholder="0.00"
+                                    min="0.01"
+                                    step="0.01"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="stock">
+                                    Cantidad disponible
+                                </label>
+                                <input
+                                    class="form-input"
+                                    type="number"
+                                    id="stock"
+                                    name="stock"
+                                    placeholder="0"
+                                    min="0"
+                                    step="1"
+                                    required>
+                            </div>
+
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                ＋ Registrar producto
+                            </button>
+
+                            <button type="reset" class="btn btn-secondary">
+                                Limpiar formulario
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
             {% endif %}
-        {% endwith %}
 
-        <section class="panel">
-            <h3>Agregar producto</h3>
+            <!-- TABLA DE PRODUCTOS -->
+            <div class="section-heading">
+                <h2 class="section-title">Productos registrados</h2>
+                <span class="section-note">Consulta y control de existencias</span>
+            </div>
 
-            <form method="POST" class="formulario">
-                <div>
-                    <label for="codigo">Código</label>
-                    <input id="codigo" name="codigo" required maxlength="30">
+            <section class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Catálogo de inventario</h2>
+                        <p class="panel-description">
+                            Revisá los precios y las cantidades disponibles.
+                        </p>
+                    </div>
+                    <span class="panel-tag">INVENTARIO</span>
                 </div>
 
-                <div>
-                    <label for="nombre">Nombre del producto</label>
-                    <input id="nombre" name="nombre" required maxlength="100">
+                <div class="table-tools">
+                    <div class="search-box">
+                        <span class="search-icon">⌕</span>
+                        <input
+                            type="search"
+                            id="buscarProducto"
+                            class="search-input"
+                            placeholder="Buscar por código o nombre..."
+                            aria-label="Buscar productos">
+                    </div>
+
+                    <span class="result-count" id="resultCount">
+                        {{ productos|length }} producto(s)
+                    </span>
                 </div>
 
-                <div>
-                    <label for="precio">Precio de venta (Q)</label>
-                    <input id="precio" name="precio" type="number"
-                           min="0.01" step="0.01" required>
-                </div>
+                {% if productos %}
 
-                <div>
-                    <label for="stock">Existencias</label>
-                    <input id="stock" name="stock" type="number"
-                           min="0" step="1" required>
-                </div>
-
-                <button type="submit">+ Guardar producto</button>
-            </form>
-        </section>
-
-        <section class="panel">
-            <h3>Productos registrados</h3>
-
-            <div class="tabla-contenedor">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Existencias</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for producto in productos %}
+                <div class="table-wrap">
+                    <table class="inventory-table" id="inventoryTable">
+                        <thead>
                             <tr>
-                                <td>{{ producto.codigo }}</td>
-                                <td>{{ producto.nombre }}</td>
-                                <td>Q {{ "%.2f"|format(producto.precio) }}</td>
-                                <td>{{ producto.stock }}</td>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+                                    <th>Acciones</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for producto in productos %}
+                            <tr class="product-row">
                                 <td>
-                                    {% if rol in ["Administrador", "Encargado de Inventario"] %}
-                                        <form method="POST"
-                                              action="{{ url_for('eliminar', codigo=producto.codigo) }}"
-                                              onsubmit="return confirm('¿Eliminar este producto?');">
-                                            <button class="eliminar" type="submit">
+                                    <span class="product-code">
+                                        {{ producto.codigo }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="product-name">
+                                        {{ producto.nombre }}
+                                    </span>
+                                </td>
+
+                                <td class="product-price">
+                                    Q {{ "%.2f"|format(producto.precio|float) }}
+                                </td>
+
+                                <td>{{ producto.stock }}</td>
+
+                                <td>
+                                    {% if producto.stock|int == 0 %}
+                                        <span class="stock-badge empty">
+                                            Sin existencias
+                                        </span>
+                                    {% elif producto.stock|int <= 5 %}
+                                        <span class="stock-badge low">
+                                            Stock bajo
+                                        </span>
+                                    {% else %}
+                                        <span class="stock-badge">
+                                            Disponible
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+                                <td>
+                                    <div class="table-actions">
+                                        <form
+                                            class="delete-form"
+                                            action="{{ url_for('eliminar', codigo=producto.codigo) }}"
+                                            method="POST"
+                                            onsubmit="return confirmarEliminacion('{{ producto.nombre|e }}');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger btn-small">
                                                 Eliminar
                                             </button>
                                         </form>
-                                    {% else %}
-                                        Sin permiso
-                                    {% endif %}
+                                    </div>
                                 </td>
+                                {% endif %}
                             </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5" class="vacio">
-                                    Todavía no hay productos registrados.
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="noSearchResults" hidden>
+                    <div class="empty-icon">⌕</div>
+                    <div class="empty-title">No se encontraron resultados</div>
+                    <div>
+                        Probá con otro código o nombre de producto.
+                    </div>
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <div class="empty-icon">▦</div>
+                    <div class="empty-title">Todavía no hay productos</div>
+                    <div>
+                        Los productos que registrés aparecerán en esta sección.
+                    </div>
+                </div>
+
+                {% endif %}
+
+            </section>
+
+            <!-- PIE DE PÁGINA -->
+            <footer class="footer">
+                <div>
+                    <span class="footer-brand">NEXORA</span>
+                    GAMING & TECHNOLOGY
+                </div>
+                <div>Panel de gestión del negocio</div>
+            </footer>
+
+        </div>
     </main>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const menuToggle = document.getElementById("menuToggle");
+    const main = document.getElementById("main");
+
+    function actualizarEstadoBoton() {
+        const esMovil = window.innerWidth <= 760;
+        const estaAbierto = sidebar.classList.contains("open");
+        const estaOculto = sidebar.classList.contains("hidden");
+
+        if (esMovil) {
+            menuToggle.setAttribute("aria-expanded", estaAbierto);
+            menuToggle.setAttribute(
+                "aria-label",
+                estaAbierto ? "Cerrar menú" : "Abrir menú"
+            );
+        } else {
+            menuToggle.setAttribute("aria-expanded", !estaOculto);
+            menuToggle.setAttribute(
+                "aria-label",
+                estaOculto ? "Mostrar menú" : "Ocultar menú"
+            );
+        }
+    }
+
+    function abrirMenuMovil() {
+        sidebar.classList.remove("hidden");
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+        actualizarEstadoBoton();
+    }
+
+    function cerrarMenuMovil() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        actualizarEstadoBoton();
+    }
+
+    menuToggle.addEventListener("click", function () {
+        if (window.innerWidth <= 760) {
+            if (sidebar.classList.contains("open")) {
+                cerrarMenuMovil();
+            } else {
+                abrirMenuMovil();
+            }
+        } else {
+            sidebar.classList.toggle("hidden");
+
+            const oculto = sidebar.classList.contains("hidden");
+            main.classList.toggle("expanded", oculto);
+
+            actualizarEstadoBoton();
+        }
+    });
+
+    overlay.addEventListener("click", cerrarMenuMovil);
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            cerrarMenuMovil();
+        }
+    });
+
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 760) {
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+
+            const oculto = sidebar.classList.contains("hidden");
+            main.classList.toggle("expanded", oculto);
+        } else {
+            sidebar.classList.remove("hidden");
+            main.classList.remove("expanded");
+        }
+
+        actualizarEstadoBoton();
+    });
+
+    // BÚSQUEDA DE PRODUCTOS
+    const buscarProducto = document.getElementById("buscarProducto");
+    const filasProductos = document.querySelectorAll(".product-row");
+    const resultCount = document.getElementById("resultCount");
+    const noSearchResults = document.getElementById("noSearchResults");
+
+    if (buscarProducto) {
+        buscarProducto.addEventListener("input", function () {
+            const busqueda = this.value.trim().toLowerCase();
+            let visibles = 0;
+
+            filasProductos.forEach(function (fila) {
+                const contenido = fila.textContent.toLowerCase();
+                const coincide = contenido.includes(busqueda);
+
+                fila.classList.toggle("hidden-row", !coincide);
+
+                if (coincide) {
+                    visibles++;
+                }
+            });
+
+            if (resultCount) {
+                resultCount.textContent =
+                    visibles + (visibles === 1 ? " producto" : " productos");
+            }
+
+            if (noSearchResults) {
+                noSearchResults.hidden =
+                    visibles !== 0 || filasProductos.length === 0;
+            }
+        });
+    }
+
+    // CONFIRMACIÓN ANTES DE ELIMINAR
+    function confirmarEliminacion(nombre) {
+        return confirm(
+            '¿Estás seguro de que deseás eliminar "' +
+            nombre +
+            '" del inventario?'
+        );
+    }
+
+    // VALIDACIÓN BÁSICA DEL FORMULARIO
+    const productForm = document.getElementById("productForm");
+
+    if (productForm) {
+        productForm.addEventListener("submit", function (event) {
+            const precio = parseFloat(
+                document.getElementById("precio").value
+            );
+
+            const stock = Number(
+                document.getElementById("stock").value
+            );
+
+            if (!Number.isFinite(precio) || precio <= 0) {
+                event.preventDefault();
+                alert("Ingresá un precio mayor que cero.");
+                return;
+            }
+
+            if (!Number.isInteger(stock) || stock < 0) {
+                event.preventDefault();
+                alert("El stock debe ser un número entero igual o mayor que cero.");
+            }
+        });
+    }
+
+    actualizarEstadoBoton();
+</script>
+
 </body>
 </html>
