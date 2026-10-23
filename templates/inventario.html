@@ -349,7 +349,6 @@
         .product-image-placeholder {
             width: 64px;
             height: 58px;
-            display: grid;
             place-items: center;
             background: #20243a;
             border: 1px solid var(--borde);
@@ -406,6 +405,7 @@
             background: #1d2940;
             border: 1px solid #35476a;
             color: #dceaff;
+            overflow-wrap: anywhere;
         }
 
         .preview-container {
@@ -491,13 +491,28 @@
 
         <nav class="menu">
             <div class="menu-title">Principal</div>
-            <a href="{{ url_for('dashboard') }}">⌂ &nbsp; Dashboard</a>
-            <a href="{{ url_for('ver_inventario') }}" class="active">▦ &nbsp; Inventario</a>
-            <a href="{{ url_for('ver_ventas') }}">▤ &nbsp; Ventas</a>
-            <a href="{{ url_for('estadisticas') }}">▥ &nbsp; Estadísticas</a>
+
+            <a href="{{ url_for('dashboard') }}">
+                ⌂ &nbsp; Dashboard
+            </a>
+
+            <a href="{{ url_for('ver_inventario') }}" class="active">
+                ▦ &nbsp; Inventario
+            </a>
+
+            <a href="{{ url_for('ver_ventas') }}">
+                ▤ &nbsp; Ventas
+            </a>
+
+            <a href="{{ url_for('ver_estadisticas') }}">
+                ▥ &nbsp; Estadísticas
+            </a>
 
             <div class="menu-title">Cuenta</div>
-            <a href="{{ url_for('logout') }}">↪ &nbsp; Cerrar sesión</a>
+
+            <a href="{{ url_for('cerrar_sesion') }}">
+                ↪ &nbsp; Cerrar sesión
+            </a>
         </nav>
     </aside>
 
@@ -509,7 +524,9 @@
                 <p>Administra los productos y controla las existencias.</p>
             </div>
 
-            <a class="logout" href="{{ url_for('logout') }}">Cerrar sesión ↗</a>
+            <a class="logout" href="{{ url_for('cerrar_sesion') }}">
+                Cerrar sesión ↗
+            </a>
         </header>
 
         {% with mensajes = get_flashed_messages() %}
@@ -525,6 +542,7 @@
 
         {% for producto in productos %}
             {% set unidades.total = unidades.total + (producto.stock|int) %}
+
             {% if producto.stock|int < 5 %}
                 {% set unidades.bajos = unidades.bajos + 1 %}
             {% endif %}
@@ -610,21 +628,31 @@
                     </div>
 
                     <div class="field field-full">
-                        <label for="imagen">Fotografía del producto (opcional)</label>
+                        <label for="imagen">
+                            Fotografía del producto (opcional)
+                        </label>
+
                         <input
                             type="file"
                             id="imagen"
                             name="imagen"
-                            accept="image/*"
+                            accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif"
                         >
 
                         <div class="muted">
-                            Puedes seleccionar una imagen JPG, PNG o WEBP desde tu computadora.
+                            Puedes seleccionar una imagen JPG, PNG, WEBP o GIF
+                            desde tu computadora.
                         </div>
 
                         <div class="preview-container" id="previewContainer">
-                            <img id="previewImagen" src="" alt="Vista previa del producto">
-                            <span class="muted">Vista previa de la imagen seleccionada</span>
+                            <img
+                                id="previewImagen"
+                                src=""
+                                alt="Vista previa del producto"
+                            >
+                            <span class="muted">
+                                Vista previa de la imagen seleccionada
+                            </span>
                         </div>
                     </div>
 
@@ -643,7 +671,9 @@
             <div class="panel-heading">
                 <div>
                     <h2>Productos registrados</h2>
-                    <span class="muted">Consulta los precios y las existencias.</span>
+                    <span class="muted">
+                        Consulta los precios y las existencias.
+                    </span>
                 </div>
 
                 <input
@@ -665,6 +695,7 @@
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Estado</th>
+
                             {% if rol in ['Administrador', 'Encargado de Inventario'] %}
                                 <th>Acciones</th>
                             {% endif %}
@@ -683,17 +714,28 @@
                                         loading="lazy"
                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
                                     >
-                                    <div class="product-image-placeholder" style="display:none;">
+
+                                    <div
+                                        class="product-image-placeholder"
+                                        style="display:none;"
+                                    >
                                         ▦
                                     </div>
                                 {% else %}
-                                    <div class="product-image-placeholder">▦</div>
+                                    <div
+                                        class="product-image-placeholder"
+                                        style="display:grid;"
+                                    >
+                                        ▦
+                                    </div>
                                 {% endif %}
                             </td>
 
                             <td>{{ producto.codigo }}</td>
 
-                            <td class="product-name">{{ producto.nombre }}</td>
+                            <td class="product-name">
+                                {{ producto.nombre }}
+                            </td>
 
                             <td class="price">
                                 Q {{ "%.2f"|format(producto.precio|float) }}
@@ -703,18 +745,24 @@
 
                             <td>
                                 {% if producto.stock|int <= 0 %}
-                                    <span class="stock-badge stock-out">Agotado</span>
+                                    <span class="stock-badge stock-out">
+                                        Agotado
+                                    </span>
                                 {% elif producto.stock|int < 5 %}
-                                    <span class="stock-badge stock-low">Stock bajo</span>
+                                    <span class="stock-badge stock-low">
+                                        Stock bajo
+                                    </span>
                                 {% else %}
-                                    <span class="stock-badge stock-ok">Disponible</span>
+                                    <span class="stock-badge stock-ok">
+                                        Disponible
+                                    </span>
                                 {% endif %}
                             </td>
 
                             {% if rol in ['Administrador', 'Encargado de Inventario'] %}
                             <td>
                                 <form
-                                    action="{{ url_for('eliminar_producto', codigo=producto.codigo) }}"
+                                    action="{{ url_for('eliminar', codigo=producto.codigo) }}"
                                     method="POST"
                                     onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');"
                                 >
@@ -725,6 +773,7 @@
                             </td>
                             {% endif %}
                         </tr>
+
                     {% else %}
                         <tr>
                             <td
@@ -739,7 +788,11 @@
                 </table>
             </div>
 
-            <p class="muted" id="sinResultados" style="display:none; margin-top:20px;">
+            <p
+                class="muted"
+                id="sinResultados"
+                style="display:none; margin-top:20px;"
+            >
                 No se encontraron productos con esa búsqueda.
             </p>
         </section>
@@ -758,10 +811,12 @@
 
         filas.forEach(function (fila) {
             const texto = fila.textContent.toLowerCase();
+            const esProducto = fila.querySelector(".product-name");
 
             if (texto.includes(busqueda)) {
                 fila.style.display = "";
-                if (fila.querySelector(".product-name")) {
+
+                if (esProducto) {
                     encontrados++;
                 }
             } else {
@@ -787,14 +842,29 @@
                 return;
             }
 
-            if (!archivo.type.startsWith("image/")) {
-                alert("Selecciona un archivo de imagen válido.");
+            const tiposPermitidos = [
+                "image/png",
+                "image/jpeg",
+                "image/webp",
+                "image/gif"
+            ];
+
+            if (!tiposPermitidos.includes(archivo.type)) {
+                alert("Selecciona una imagen PNG, JPG, WEBP o GIF.");
                 this.value = "";
                 previewContainer.style.display = "none";
+                previewImagen.removeAttribute("src");
                 return;
             }
 
-            previewImagen.src = URL.createObjectURL(archivo);
+            if (previewImagen.dataset.urlAnterior) {
+                URL.revokeObjectURL(previewImagen.dataset.urlAnterior);
+            }
+
+            const urlTemporal = URL.createObjectURL(archivo);
+
+            previewImagen.src = urlTemporal;
+            previewImagen.dataset.urlAnterior = urlTemporal;
             previewContainer.style.display = "flex";
         });
     }
