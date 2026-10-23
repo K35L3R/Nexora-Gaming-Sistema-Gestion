@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas | NEXORA Gaming & Technology</title>
+
+    <style>
+        :root {
+            --fondo: #10172E;
+            --fondo-secundario: #151E39;
+            --panel: #1D2947;
+            --panel-hover: #263555;
+            --borde: #2C3959;
+            --morado: #7955F5;
+            --morado-claro: #A995FF;
+            --azul: #3478F6;
+            --azul-claro: #75A6FF;
+            --texto: #E5EBFA;
+            --texto-secundario: #9AAACA;
+            --verde: #48D6A0;
+            --rojo: #FF7D8A;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--fondo);
+            color: var(--texto);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        /* ESTRUCTURA PRINCIPAL */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            width: 250px;
+            padding: 25px 17px;
+            background: #121B35;
+            border-right: 1px solid var(--borde);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform .25s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 9px 28px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            box-shadow: 0 5px 20px rgba(94, 82, 245, .23);
+        }
+
+        .brand-name {
+            color: #F2F4FF;
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 4px;
+            color: var(--texto-secundario);
+            font-size: 9px;
+            letter-spacing: 1.1px;
+        }
+
+        .nav-label {
+            padding: 27px 11px 12px;
+            color: #7485A8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-height: 47px;
+            padding: 12px 13px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #A6B4CF;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(52, 120, 246, .09);
+            border-color: rgba(52, 120, 246, .12);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(
+                110deg,
+                rgba(121, 85, 245, .24),
+                rgba(52, 120, 246, .14)
+            );
+            border-color: rgba(142, 119, 255, .25);
+            box-shadow: inset 3px 0 0 var(--morado);
+        }
+
+        .nav-icon {
+            width: 23px;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .system-card {
+            padding: 15px;
+            background: #1B2743;
+            border: 1px solid var(--borde);
+            border-radius: 13px;
+        }
+
+        .system-card-title {
+            color: #DCE5FA;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .system-card-description {
+            margin-top: 6px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .system-indicator {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 6px;
+            border-radius: 50%;
+            background: var(--verde);
+        }
+
+        /* CONTENIDO Y BARRA SUPERIOR */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 250px;
+            background:
+                radial-gradient(
+                    ellipse at 85% 0%,
+                    rgba(93, 66, 205, .11),
+                    transparent 33%
+                ),
+                var(--fondo);
+            transition: margin-left .25s ease;
+        }
+
+        .main.expanded {
+            margin-left: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: rgba(16, 23, 46, .94);
+            border-bottom: 1px solid var(--borde);
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .menu-toggle {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--panel);
+            color: white;
+            font-size: 21px;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--panel-hover);
+            border-color: var(--morado);
+        }
+
+        .menu-toggle:focus-visible {
+            outline: 2px solid var(--morado-claro);
+            outline-offset: 3px;
+        }
+
+        .breadcrumb {
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: var(--texto);
+        }
+
+        .topbar-tag {
+            flex-shrink: 0;
+            padding: 8px 12px;
+            border: 1px solid rgba(121, 85, 245, .2);
+            border-radius: 8px;
+            background: rgba(121, 85, 245, .13);
+            color: #C1B5FF;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .7px;
+        }
+
+        .content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 29px 30px;
+        }
+
+        /* ENCABEZADO */
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 27px;
+        }
+
+        .eyebrow {
+            margin-bottom: 9px;
+            color: var(--morado-claro);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            color: #F0F3FF;
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 850;
+            letter-spacing: -1px;
+        }
+
+        .description {
+            max-width: 680px;
+            margin-top: 9px;
+            color: var(--texto-secundario);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .status-label {
+            flex-shrink: 0;
+            padding: 10px 13px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: rgba(29, 41, 71, .8);
+            color: #B5C4DF;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        /* MENSAJES DE FLASK */
+
+        .flash-message,
+        .alert {
+            margin-bottom: 15px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .flash-message {
+            border: 1px solid rgba(72, 214, 160, .3);
+            background: rgba(72, 214, 160, .09);
+            color: #70E5B9;
+        }
+
+        .alert {
+            border: 1px solid rgba(255, 125, 138, .3);
+            background: rgba(255, 125, 138, .09);
+            color: #FF9AA4;
+        }
+
+        /* PANELES */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(260px, .8fr);
+            align-items: start;
+            gap: 20px;
+        }
+
+        .panel {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #202D49, #1A2641);
+            box-shadow: 0 10px 28px rgba(4, 9, 25, .12);
+        }
+
+        .panel-header {
+            padding: 19px 22px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .panel-title {
+            color: #E9EEFC;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .panel-description {
+            margin-top: 6px;
+            color: var(--texto-secundario);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .panel-body {
+            padding: 23px;
+        }
+
+        /* FORMULARIO DE VENTA */
+
+        .form-group {
+            margin-bottom: 21px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 9px;
+            color: #DCE5F8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            min-height: 45px;
+            padding: 12px 13px;
+            border: 1px solid #354363;
+            border-radius: 9px;
+            outline: none;
+            background: #151F38;
+            color: var(--texto);
+            font-family: inherit;
+            font-size: 12px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #151F38;
+            color: var(--texto);
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: var(--morado);
+            box-shadow: 0 0 0 3px rgba(121, 85, 245, .13);
+        }
+
+        .form-group input:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .form-group input::placeholder {
+            color: #7788A8;
+        }
+
+        .helper-text {
+            margin-top: 7px;
+            color: #91A2C0;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .stock-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            color: var(--texto-secundario);
+            font-size: 11px;
+        }
+
+        .stock-info strong {
+            color: var(--azul-claro);
+        }
+
+        /* TOTAL ESTIMADO */
+
+        .estimate-box {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid rgba(121, 85, 245, .3);
+            border-radius: 13px;
+            background:
+                radial-gradient(
+                    ellipse at 100% 0%,
+                    rgba(121, 85, 245, .15),
+                    transparent 65%
+                ),
+                rgba(21, 30, 57, .8);
+        }
+
+        .estimate-label {
+            color: #B3C1DC;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .estimate-total {
+            margin-top: 9px;
+            color: #F0F3FF;
+            font-size: clamp(27px, 3vw, 36px);
+            font-weight: 850;
+            letter-spacing: -.7px;
+            overflow-wrap: anywhere;
+        }
+
+        .estimate-note {
+            margin-top: 8px;
+            color: #91A2C0;
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .submit-button {
+            width: 100%;
+            min-height: 47px;
+            margin-top: 20px;
+            padding: 12px 16px;
+            border: 1px solid rgba(169, 149, 255, .25);
+            border-radius: 10px;
+            background: linear-gradient(110deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: filter .2s, transform .2s, opacity .2s;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            filter: brightness(1.12);
+            transform: translateY(-1px);
+        }
+
+        .submit-button:disabled {
+            border-color: var(--borde);
+            background: #303D59;
+            color: #8493AE;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* PANEL DE INFORMACIÓN */
+
+        .info-list {
+            display: grid;
+            gap: 21px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-icon {
+            display: grid;
+            place-items: center;
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            border: 1px solid rgba(52, 120, 246, .15);
+            border-radius: 12px;
+            background: rgba(52, 120, 246, .13);
+            color: var(--azul-claro);
+            font-size: 16px;
+        }
+
+        .info-item h3 {
+            margin: 2px 0 6px;
+            color: #E1E9FA;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .info-item p {
+            color: #91A2C0;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .info-item:nth-child(2) .info-icon {
+            background: rgba(121, 85, 245, .14);
+            color: var(--morado-claro);
+        }
+
+        .info-item:nth-child(3) .info-icon {
+            background: rgba(72, 214, 160, .10);
+            color: #70E5B9;
+        }
+
+        .info-item:nth-child(4) .info-icon {
+            background: rgba(121, 85, 245, .14);
+            color: var(--morado-claro);
+        }
+
+        .notice {
+            margin-top: 24px;
+            padding: 14px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: rgba(12, 20, 41, .3);
+            color: #A0B0CC;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .notice strong {
+            color: #DCE5FA;
+        }
+
+        /* ESTADO SIN PRODUCTOS */
+
+        .empty-state {
+            padding: 35px 22px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            margin-bottom: 13px;
+            color: var(--morado-claro);
+            font-size: 30px;
+        }
+
+        .empty-state h3 {
+            color: #E9EEFC;
+            font-size: 14px;
+        }
+
+        .empty-state p {
+            max-width: 430px;
+            margin: 10px auto 0;
+            color: var(--texto-secundario);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .inventory-link {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 14px;
+            border: 1px solid rgba(121, 85, 245, .3);
+            border-radius: 9px;
+            background: rgba(121, 85, 245, .13);
+            color: #C1B5FF;
+            font-size: 11px;
+            font-weight: 750;
+            transition: background .2s;
+        }
+
+        .inventory-link:hover {
+            background: rgba(121, 85, 245, .23);
+        }
+
+        /* PIE DE PÁGINA */
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 25px 0 5px;
+            color: #7183A3;
+            font-size: 10px;
+        }
+
+        .footer-brand {
+            color: var(--morado-claro);
+            font-weight: 850;
+            letter-spacing: 1.2px;
+        }
+
+        /* FONDO DEL MENÚ MÓVIL */
+
+        .overlay {
+            display: none;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 1100px) {
+            .section-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .info-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* TELÉFONOS */
+
+        @media (max-width: 760px) {
+            .sidebar {
+                width: 270px;
+                max-width: 85vw;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main,
+            .main.expanded {
+                margin-left: 0;
+            }
+
+            .overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 900;
+                background: rgba(2, 6, 20, .65);
+            }
+
+            .topbar {
+                min-height: 68px;
+                padding: 12px 16px;
+            }
+
+            .topbar-tag {
+                display: none;
+            }
+
+            .content {
+                padding: 22px 15px;
+            }
+
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .panel-header {
+                padding: 17px;
+            }
+
+            .panel-body {
+                padding: 18px;
+            }
+
+            .info-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .breadcrumb {
+                font-size: 11px;
+            }
+
+            .menu-toggle {
+                width: 37px;
+                height: 37px;
+            }
+
+            .estimate-box {
+                padding: 16px;
+            }
+
+            .footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar" id="sidebar">
+
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <div class="brand-logo">N</div>
+            <div>
+                <div class="brand-name">NEXORA</div>
+                <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
+            </div>
+        </a>
+
+        <div class="nav-label">MENÚ PRINCIPAL</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ver_inventario') }}" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span>Inventario</span>
+            </a>
+
+            <a href="{{ url_for('ver_ventas') }}" class="nav-link active"
+               aria-current="page">
+                <span class="nav-icon">↗</span>
+                <span>Ventas</span>
+            </a>
+
+            <a href="{{ url_for('ver_estadisticas') }}" class="nav-link">
+                <span class="nav-icon">◫</span>
+                <span>Estadísticas</span>
+            </a>
+        </nav>
+
+        <div class="nav-label">CUENTA</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('cerrar_sesion') }}" class="nav-link">
+                <span class="nav-icon">⇥</span>
+                <span>Cerrar sesión</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-card">
+                <div class="system-card-title">
+                    <span class="system-indicator"></span>
+                    Sistema de gestión
+                </div>
+                <div class="system-card-description">
+                    NEXORA Gaming & Technology<br>
+                    Panel de administración
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main" id="mainContent">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle"
+                    aria-label="Ocultar menú"
+                    aria-expanded="true"
+                    aria-controls="sidebar">
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+                    Inicio / Operaciones / <strong>Ventas</strong>
+                </div>
+            </div>
+
+            <div class="topbar-tag">MÓDULO COMERCIAL</div>
+        </header>
+
+        <div class="content">
+
+            <!-- ENCABEZADO -->
+            <section class="page-heading">
+                <div>
+                    <div class="eyebrow">NEXORA / OPERACIONES COMERCIALES</div>
+                    <h1>Registro de ventas</h1>
+                    <p class="description">
+                        Registrá la salida de productos, verificá las existencias
+                        disponibles y consultá el importe estimado antes de confirmar.
+                    </p>
+                </div>
+
+                <div class="status-label">VENTA DE PRODUCTOS</div>
+            </section>
+
+            <!-- MENSAJES DE FLASK -->
+            {% with mensajes = get_flashed_messages() %}
+                {% if mensajes %}
+                    {% for mensaje_flash in mensajes %}
+                        <div class="flash-message" role="status">
+                            {{ mensaje_flash }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if mensaje %}
+                <div class="alert" role="alert">{{ mensaje }}</div>
+            {% endif %}
+
+            {% set disponibles = productos | selectattr('stock', 'gt', 0) | list %}
+
+            <!-- FORMULARIO E INFORMACIÓN -->
+            <div class="section-grid">
+
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Nueva transacción</h2>
+                        <p class="panel-description">
+                            Seleccioná el producto y la cantidad que se venderá.
+                        </p>
+                    </div>
+
+                    {% if disponibles %}
+
+                        <div class="panel-body">
+                            <form method="POST"
+                                  action="{{ url_for('ver_ventas') }}"
+                                  id="formVenta">
+
+                                <div class="form-group">
+                                    <label for="codigo">Producto disponible</label>
+
+                                    <select id="codigo" name="codigo" required>
+                                        <option value="">Seleccioná un producto</option>
+
+                                        {% for producto in disponibles %}
+                                            <option
+                                                value="{{ producto.codigo }}"
+                                                data-precio="{{ producto.precio }}"
+                                                data-stock="{{ producto.stock }}">
+                                                {{ producto.codigo }} — {{ producto.nombre }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <div class="helper-text">
+                                        Solo se muestran productos con existencias.
+                                    </div>
+
+                                    <div class="stock-info">
+                                        <span>Existencias disponibles</span>
+                                        <strong id="stockDisponible">—</strong>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cantidad">Cantidad a vender</label>
+
+                                    <input
+                                        type="number"
+                                        id="cantidad"
+                                        name="cantidad"
+                                        min="1"
+                                        step="1"
+                                        placeholder="Ej. 1"
+                                        required
+                                        disabled>
+
+                                    <div class="helper-text" id="ayudaCantidad">
+                                        Primero seleccioná un producto.
+                                    </div>
+                                </div>
+
+                                <div class="estimate-box">
+                                    <div class="estimate-label">
+                                        Importe estimado de la venta
+                                    </div>
+
+                                    <div class="estimate-total" id="totalEstimado">
+                                        Q 0.00
+                                    </div>
+
+                                    <div class="estimate-note">
+                                        Estimación calculada según el precio y
+                                        la cantidad seleccionada.
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="submit-button"
+                                    id="botonRegistrar"
+                                    disabled>
+                                    Confirmar y registrar venta →
+                                </button>
+
+                            </form>
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            <div class="empty-icon">▦</div>
+                            <h3>No hay productos disponibles</h3>
+                            <p>
+                                Agregá productos o actualizá sus existencias desde
+                                el inventario antes de registrar una venta.
+                            </p>
+
+                            <a href="{{ url_for('ver_inventario') }}"
+                               class="inventory-link">
+                                Ir al inventario →
+                            </a>
+                        </div>
+
+                    {% endif %}
+                </section>
+
+                <!-- INFORMACIÓN DE LA OPERACIÓN -->
+                <section class="panel">
+
+                    <div class="panel-header">
+                        <h2 class="panel-title">Información de la operación</h2>
+                        <p class="panel-description">
+                            Verificaciones importantes antes de confirmar.
+                        </p>
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="info-list">
+
+                            <div class="info-item">
+                                <div class="info-icon">▤</div>
+                                <div>
+                                    <h3>Control de existencias</h3>
+                                    <p>
+                                        La cantidad no puede superar el stock
+                                        disponible del producto.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">Q</div>
+                                <div>
+                                    <h3>Cálculo del importe</h3>
+                                    <p>
+                                        El total estimado se obtiene multiplicando
+                                        el precio unitario por las unidades.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">✓</div>
+                                <div>
+                                    <h3>Actualización del inventario</h3>
+                                    <p>
+                                        Una venta registrada descuenta las unidades
+                                        vendidas del inventario, según la lógica
+                                        del servidor.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">◫</div>
+                                <div>
+                                    <h3>Historial de operaciones</h3>
+                                    <p>
+                                        Consultá las transacciones registradas
+                                        desde el módulo de estadísticas.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="notice">
+                            <strong>Importante:</strong> el importe mostrado
+                            es una estimación previa. El servidor debe volver
+                            a validar el precio, la cantidad y las existencias
+                            antes de registrar la venta.
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- PIE DE PÁGINA -->
+            <footer class="footer">
+                <div>
+                    <span class="footer-brand">NEXORA</span>
+                    GAMING & TECHNOLOGY
+                </div>
+                <div>Panel de gestión del negocio · Módulo de ventas</div>
+            </footer>
+
+        </div>
+    </main>
+</div>
+
+<script>
+    // ==========================================
+    // MENÚ LATERAL
+    // Mismo comportamiento que el dashboard
+    // ==========================================
+
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const menuToggle = document.getElementById("menuToggle");
+    const mainContent = document.getElementById("mainContent");
+
+    function esMovil() {
+        return window.innerWidth <= 760;
+    }
+
+    function actualizarEstadoBoton() {
+        const movil = esMovil();
+        const abierto = movil
+            ? sidebar.classList.contains("open")
+            : !sidebar.classList.contains("hidden");
+
+        menuToggle.setAttribute("aria-expanded", String(abierto));
+
+        if (movil) {
+            menuToggle.setAttribute(
+                "aria-label",
+                abierto ? "Cerrar menú" : "Abrir menú"
+            );
+        } else {
+            menuToggle.setAttribute(
+                "aria-label",
+                abierto ? "Ocultar menú" : "Mostrar menú"
+            );
+        }
+    }
+
+    function abrirMenu() {
+        if (esMovil()) {
+            sidebar.classList.remove("hidden");
+            sidebar.classList.add("open");
+            overlay.classList.add("show");
+        } else {
+            sidebar.classList.remove("hidden");
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+            mainContent.classList.remove("expanded");
+        }
+
+        actualizarEstadoBoton();
+    }
+
+    function cerrarMenu() {
+        if (esMovil()) {
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+        } else {
+            sidebar.classList.add("hidden");
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+            mainContent.classList.add("expanded");
+        }
+
+        actualizarEstadoBoton();
+    }
+
+    menuToggle.addEventListener("click", function () {
+        const abierto = esMovil()
+            ? sidebar.classList.contains("open")
+            : !sidebar.classList.contains("hidden");
+
+        if (abierto) {
+            cerrarMenu();
+        } else {
+            abrirMenu();
+        }
+    });
+
+    overlay.addEventListener("click", function () {
+        cerrarMenu();
+    });
+
+    document.addEventListener("keydown", function (evento) {
+        if (evento.key === "Escape") {
+            if (esMovil()) {
+                cerrarMenu();
+            }
+        }
+    });
+
+    window.addEventListener("resize", function () {
+        if (esMovil()) {
+            // En móvil el panel comienza cerrado.
+            sidebar.classList.remove("hidden");
+            mainContent.classList.remove("expanded");
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+        } else {
+            // En computadora el panel comienza visible.
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+        }
+
+        actualizarEstadoBoton();
+    });
+
+    // Estado inicial del menú
+    if (esMovil()) {
+        sidebar.classList.remove("hidden");
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        mainContent.classList.remove("expanded");
+    } else {
+        sidebar.classList.remove("hidden");
+        mainContent.classList.remove("expanded");
+    }
+
+    actualizarEstadoBoton();
+
+
+    // ==========================================
+    // CÁLCULO Y VALIDACIÓN PREVIA DE LA VENTA
+    // ==========================================
+
+    const selectorProducto = document.getElementById("codigo");
+    const campoCantidad = document.getElementById("cantidad");
+    const stockDisponible = document.getElementById("stockDisponible");
+    const totalEstimado = document.getElementById("totalEstimado");
+    const ayudaCantidad = document.getElementById("ayudaCantidad");
+    const botonRegistrar = document.getElementById("botonRegistrar");
+    const formVenta = document.getElementById("formVenta");
+
+    function actualizarVenta() {
+        if (
+            !selectorProducto ||
+            !campoCantidad ||
+            !stockDisponible ||
+            !totalEstimado ||
+            !ayudaCantidad ||
+            !botonRegistrar
+        ) {
+            return;
+        }
+
+        const opcion = selectorProducto.options[
+            selectorProducto.selectedIndex
+        ];
+
+        if (!opcion || !opcion.value) {
+            campoCantidad.value = "";
+            campoCantidad.disabled = true;
+            campoCantidad.removeAttribute("max");
+
+            stockDisponible.textContent = "—";
+            ayudaCantidad.textContent =
+                "Primero seleccioná un producto.";
+            totalEstimado.textContent = "Q 0.00";
+            botonRegistrar.disabled = true;
+
+            return;
+        }
+
+        const precio = Number(opcion.dataset.precio);
+        const stock = Number(opcion.dataset.stock);
+
+        campoCantidad.disabled = false;
+        campoCantidad.max = stock;
+        campoCantidad.placeholder = "Entre 1 y " + stock;
+
+        stockDisponible.textContent = stock + " unidades";
+
+        const cantidad = Number(campoCantidad.value);
+
+        const valida =
+            Number.isInteger(cantidad) &&
+            cantidad >= 1 &&
+            cantidad <= stock &&
+            Number.isFinite(precio) &&
+            precio >= 0;
+
+        if (valida) {
+            totalEstimado.textContent = "Q " +
+                (precio * cantidad).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+            botonRegistrar.disabled = false;
+            ayudaCantidad.textContent = "Cantidad válida.";
+        } else {
+            totalEstimado.textContent = "Q 0.00";
+            botonRegistrar.disabled = true;
+
+            ayudaCantidad.textContent = campoCantidad.value === ""
+                ? "Ingresá una cantidad entera entre 1 y " + stock + "."
+                : "La cantidad debe estar entre 1 y " + stock + ".";
+        }
+    }
+
+    if (selectorProducto && campoCantidad) {
+        selectorProducto.addEventListener("change", function () {
+            campoCantidad.value = "";
+            actualizarVenta();
+        });
+
+        campoCantidad.addEventListener("input", actualizarVenta);
+    }
+
+    if (formVenta) {
+        formVenta.addEventListener("submit", function (evento) {
+            const opcion = selectorProducto.options[
+                selectorProducto.selectedIndex
+            ];
+
+            const cantidad = Number(campoCantidad.value);
+            const precio = Number(opcion?.dataset.precio);
+            const stock = Number(opcion?.dataset.stock);
+
+            const productoValido = opcion && opcion.value;
+            const cantidadValida =
+                Number.isInteger(cantidad) &&
+                cantidad >= 1 &&
+                cantidad <= stock;
+
+            const precioValido =
+                Number.isFinite(precio) && precio >= 0;
+
+            if (
+                !productoValido ||
+                !cantidadValida ||
+                !precioValido
+            ) {
+                evento.preventDefault();
+
+                alert(
+                    "Verificá el producto, el precio, la cantidad " +
+                    "y las existencias disponibles."
+                );
+
+                return;
+            }
+
+            const confirmar = window.confirm(
+                "¿Confirmás la venta de " +
+                cantidad +
+                " unidad(es) de " +
+                opcion.textContent.trim() +
+                "?"
+            );
+
+            if (!confirmar) {
+                evento.preventDefault();
+            }
+        });
+    }
+
+    actualizarVenta();
+</script>
+
+</body>
+</html>
