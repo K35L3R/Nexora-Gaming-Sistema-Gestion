@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXORA | Estadísticas</title>
+
+    <style>
+        :root {
+            --fondo: #10172E;
+            --fondo-secundario: #151E39;
+            --panel: #1D2947;
+            --panel-hover: #263555;
+            --borde: #2C3959;
+            --morado: #7955F5;
+            --morado-claro: #A995FF;
+            --azul: #3478F6;
+            --azul-claro: #75A6FF;
+            --texto: #E5EBFA;
+            --texto-secundario: #9AAACA;
+            --verde: #48D6A0;
+            --rojo: #FF8495;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--fondo);
+            color: var(--texto);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* ESTRUCTURA GENERAL */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            width: 250px;
+            padding: 25px 17px;
+            background: #121B35;
+            border-right: 1px solid var(--borde);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform .25s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 9px 28px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            box-shadow: 0 5px 20px #5E52F53B;
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: #F2F4FF;
+        }
+
+        .brand-subtitle {
+            margin-top: 4px;
+            font-size: 9px;
+            letter-spacing: 1.1px;
+            color: var(--texto-secundario);
+        }
+
+        .nav-label {
+            padding: 27px 11px 12px;
+            color: #7485A8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-height: 47px;
+            padding: 12px 13px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: #A6B4CF;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: #3478F617;
+            border-color: #3478F61F;
+        }
+
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(
+                110deg,
+                #7955F53D,
+                #3478F624
+            );
+            border-color: #8E77FF40;
+            box-shadow: inset 3px 0 0 var(--morado);
+        }
+
+        .nav-icon {
+            width: 23px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .system-card {
+            padding: 15px;
+            background: #1B2743;
+            border: 1px solid var(--borde);
+            border-radius: 13px;
+        }
+
+        .system-card-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #DCE5FA;
+        }
+
+        .system-card-description {
+            margin-top: 6px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .system-indicator {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 6px;
+            background: var(--verde);
+            border-radius: 50%;
+        }
+
+        /* CONTENIDO Y BARRA SUPERIOR */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    ellipse at 85% 0%,
+                    #5D42CD1C,
+                    transparent 33%
+                ),
+                var(--fondo);
+            transition: margin-left .25s ease;
+        }
+
+        .main.expanded {
+            margin-left: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: #10172EF0;
+            border-bottom: 1px solid var(--borde);
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .menu-toggle {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--panel);
+            color: white;
+            font-size: 21px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--panel-hover);
+            border-color: var(--morado);
+        }
+
+        .menu-toggle:focus-visible {
+            outline: 2px solid var(--morado-claro);
+            outline-offset: 3px;
+        }
+
+        .breadcrumb {
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: var(--texto);
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .avatar {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 750;
+            color: #F0F3FF;
+            overflow-wrap: anywhere;
+        }
+
+        .user-role {
+            margin-top: 4px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+        }
+
+        .content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 29px 30px;
+        }
+
+        /* ENCABEZADOS */
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 27px;
+        }
+
+        .eyebrow {
+            margin-bottom: 9px;
+            color: var(--morado-claro);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .page-title {
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 850;
+            letter-spacing: -1px;
+            color: #F0F3FF;
+        }
+
+        .welcome-description {
+            margin-top: 9px;
+            color: var(--texto-secundario);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .date-chip {
+            padding: 10px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: #1D2947CC;
+            color: #B5C4DF;
+            font-size: 11px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 27px 0 15px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #E7EDFB;
+        }
+
+        .section-note {
+            color: #8395B5;
+            font-size: 11px;
+        }
+
+        /* TARJETAS DE INDICADORES */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #243352, #1C2845);
+            transition: transform .2s ease, border-color .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #7955F599;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #AAB9D4;
+            font-size: 11px;
+            font-weight: 650;
+            line-height: 1.5;
+        }
+
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        .icon-blue {
+            color: var(--azul-claro);
+            background: #3478F629;
+        }
+
+        .icon-purple {
+            color: #B7A5FF;
+            background: #7955F52B;
+        }
+
+        .icon-green {
+            color: #65E2B4;
+            background: #48D6A01F;
+        }
+
+        .stat-value {
+            margin-top: 20px;
+            color: #F0F3FF;
+            font-size: clamp(22px, 2.3vw, 30px);
+            font-weight: 850;
+            letter-spacing: -.7px;
+            overflow-wrap: anywhere;
+        }
+
+        .stat-description {
+            margin-top: 8px;
+            color: #8496B6;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        /* PANELES */
+
+        .panel {
+            min-width: 0;
+            overflow: hidden;
+            margin-top: 23px;
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            background: linear-gradient(145deg, #202D49, #1A2641);
+            box-shadow: 0 10px 28px #0409191F;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .panel-title {
+            color: #E9EEFC;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .panel-description {
+            margin-top: 5px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .panel-tag {
+            flex-shrink: 0;
+            padding: 6px 9px;
+            border-radius: 7px;
+            border: 1px solid #7955F533;
+            background: #7955F521;
+            color: #C1B5FF;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .6px;
+        }
+
+        /* GRÁFICA */
+
+        .chart-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .control-button,
+        .select-control {
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            background: #202D49;
+            color: var(--texto-secundario);
+            padding: 9px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .control-button:hover,
+        .select-control:hover {
+            border-color: var(--morado);
+            color: var(--morado-claro);
+        }
+
+        .control-button.active {
+            background: #352B60;
+            border-color: var(--morado);
+            color: var(--morado-claro);
+        }
+
+        .chart-area {
+            padding: 23px;
+            background: radial-gradient(
+                ellipse at 100% 0%,
+                #7955F51F,
+                transparent 55%
+            );
+        }
+
+        .chart-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .chart-total {
+            color: #F0F3FF;
+            font-size: clamp(24px, 3vw, 34px);
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        .chart-caption {
+            margin-top: 6px;
+            color: var(--texto-secundario);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .chart-legend {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--texto-secundario);
+            font-size: 11px;
+        }
+
+        .legend-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--morado-claro);
+        }
+
+        .chart-scroll {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .chart-svg {
+            display: block;
+            width: 100%;
+            min-width: 430px;
+            height: auto;
+            overflow: visible;
+        }
+
+        .chart-svg text {
+            font-family: "Segoe UI", Arial, sans-serif;
+            fill: #9AAACA;
+            font-size: 11px;
+        }
+
+        .chart-point {
+            cursor: pointer;
+            transition: r .15s;
+        }
+
+        .chart-point:hover {
+            r: 7;
+        }
+
+        .chart-empty {
+            padding: 28px 12px;
+            text-align: center;
+            color: var(--texto-secundario);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        /* FILTROS */
+
+        .filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 18px 20px;
+            background: #17223C;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 190px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 14px 12px 38px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            outline: none;
+            background: #202D49;
+            color: var(--texto);
+            font-size: 12px;
+        }
+
+        .search-box input::placeholder {
+            color: #8290AD;
+        }
+
+        .search-box input:focus,
+        .select-control:focus {
+            border-color: var(--morado);
+            box-shadow: 0 0 0 3px #7955F51A;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 13px;
+            top: 10px;
+            color: var(--texto-secundario);
+        }
+
+        .record-count {
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid #7955F533;
+            background: #7955F51F;
+            color: var(--morado-claro);
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* TABLA */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .sales-table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .sales-table thead {
+            background: #17223C;
+        }
+
+        .sales-table th {
+            padding: 14px 17px;
+            color: #95A6C4;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .sales-table th button {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            letter-spacing: inherit;
+            text-transform: inherit;
+        }
+
+        .sales-table th button:hover {
+            color: var(--morado-claro);
+        }
+
+        .sales-table td {
+            padding: 14px 17px;
+            border-top: 1px solid var(--borde);
+            color: #D7E1F4;
+            font-size: 11px;
+            vertical-align: middle;
+        }
+
+        .sales-table tbody tr {
+            transition: background .15s ease;
+        }
+
+        .sales-table tbody tr:hover {
+            background: #3478F610;
+        }
+
+        .product-code {
+            display: inline-block;
+            margin-bottom: 5px;
+            padding: 4px 7px;
+            border-radius: 6px;
+            background: #7955F524;
+            color: #BDAFFF;
+            font-size: 9px;
+        }
+
+        .product-name {
+            display: block;
+            color: #DDE6F8;
+            font-weight: 700;
+        }
+
+        .sale-user {
+            color: #AAB9D3;
+        }
+
+        .quantity {
+            display: inline-block;
+            min-width: 30px;
+            padding: 6px 8px;
+            text-align: center;
+            border-radius: 7px;
+            background: #7955F526;
+            color: var(--morado-claro);
+            font-weight: 800;
+        }
+
+        .money {
+            color: var(--verde);
+            font-weight: 850;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date {
+            color: var(--texto-secundario);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: 7px;
+            background: #48D6A01A;
+            color: #70E5B9;
+            font-size: 9px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .status::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--verde);
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 14px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #263C65, #352B60);
+            color: var(--morado-claro);
+            font-size: 25px;
+        }
+
+        .empty-title {
+            color: var(--texto);
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .empty-text {
+            max-width: 430px;
+            margin: 10px auto 18px;
+            color: var(--texto-secundario);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .primary-button {
+            display: inline-block;
+            padding: 11px 15px;
+            border-radius: 10px;
+            background: linear-gradient(110deg, var(--azul), var(--morado));
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            transition: transform .2s ease;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            display: none;
+            padding: 25px 18px;
+            text-align: center;
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 15px 20px;
+            border-top: 1px solid var(--borde);
+            background: #17223C;
+        }
+
+        .pagination-text {
+            color: var(--texto-secundario);
+            font-size: 11px;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 7px;
+        }
+
+        .page-button {
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 8px 11px;
+            background: #202D49;
+            color: var(--texto);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .page-button:hover:not(:disabled) {
+            background: #352B60;
+            color: var(--morado-claro);
+        }
+
+        .page-button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .panel-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--borde);
+            background: #17223C;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 0 5px;
+            color: #7183A3;
+            font-size: 10px;
+        }
+
+        .footer-brand {
+            color: var(--morado-claro);
+            font-weight: 850;
+            letter-spacing: 1.2px;
+        }
+
+        .overlay {
+            display: none;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* TELÉFONOS */
+
+        @media (max-width: 760px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main,
+            .main.expanded {
+                margin-left: 0;
+            }
+
+            .overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 900;
+                background: #020614A6;
+            }
+
+            .topbar {
+                padding: 13px 16px;
+            }
+
+            .content {
+                padding: 22px 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .panel-header {
+                padding: 16px;
+            }
+
+            .chart-area {
+                padding: 17px;
+            }
+
+            .filters {
+                padding: 15px;
+            }
+
+            .search-box {
+                flex-basis: 100%;
+            }
+
+            .filters .select-control {
+                flex: 1;
+                min-width: 130px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .stat-card {
+                padding: 13px;
+                border-radius: 13px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .stat-icon {
+                width: 31px;
+                height: 31px;
+                font-size: 15px;
+            }
+
+            .stat-value {
+                margin-top: 15px;
+                font-size: 21px;
+            }
+
+            .stat-description {
+                font-size: 9px;
+            }
+
+            .topbar-user {
+                gap: 7px;
+            }
+
+            .user-name {
+                max-width: 100px;
+            }
+
+            .date-chip {
+                display: none;
+            }
+
+            .chart-controls {
+                width: 100%;
+            }
+
+            .control-button {
+                flex: 1;
+            }
+
+            .pagination {
+                padding: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- MENÚ LATERAL CON EL FORMATO DEL DASHBOARD -->
+    <aside class="sidebar" id="sidebar">
+
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <div class="brand-logo">N</div>
+            <div>
+                <div class="brand-name">NEXORA</div>
+                <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
+            </div>
+        </a>
+
+        <div class="nav-label">MENÚ PRINCIPAL</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ver_inventario') }}" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span>Inventario</span>
+            </a>
+
+            <a href="{{ url_for('ver_ventas') }}" class="nav-link">
+                <span class="nav-icon">↗</span>
+                <span>Ventas</span>
+            </a>
+
+            <a href="{{ url_for('ver_estadisticas') }}"
+               class="nav-link active"
+               aria-current="page">
+                <span class="nav-icon">◫</span>
+                <span>Estadísticas</span>
+            </a>
+        </nav>
+
+        <div class="nav-label">CUENTA</div>
+
+        <nav class="nav-menu">
+            <a href="{{ url_for('cerrar_sesion') }}" class="nav-link">
+                <span class="nav-icon">⇥</span>
+                <span>Cerrar sesión</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-card">
+                <div class="system-card-title">
+                    <span class="system-indicator"></span>
+                    Sistema de gestión
+                </div>
+                <div class="system-card-description">
+                    NEXORA Gaming & Technology<br>
+                    Panel de administración
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main" id="main">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle"
+                    aria-label="Ocultar menú"
+                    aria-expanded="true"
+                    aria-controls="sidebar">
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+                    Inicio / Reportes / <strong>Estadísticas</strong>
+                </div>
+            </div>
+
+            <div class="topbar-user">
+                <div class="avatar">
+                    {{ usuario[0]|upper if usuario else 'N' }}
+                </div>
+                <div>
+                    <div class="user-name">{{ usuario }}</div>
+                    <div class="user-role">{{ rol }}</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- ENCABEZADO -->
+            <section class="welcome">
+                <div>
+                    <div class="eyebrow">NEXORA / ANÁLISIS DEL NEGOCIO</div>
+                    <h1 class="page-title">Estadísticas y ventas</h1>
+                    <p class="welcome-description">
+                        Explorá los indicadores y el historial de transacciones de tu tienda.
+                    </p>
+                </div>
+
+                <div class="date-chip">
+                    ◆ Reporte general de ventas
+                </div>
+            </section>
+
+            <!-- INDICADORES -->
+            <div class="section-heading">
+                <h2 class="section-title">Resumen de actividad</h2>
+                <span class="section-note">Indicadores del historial de ventas</span>
+            </div>
+
+            <section class="stats-grid">
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Ventas registradas</span>
+                        <span class="stat-icon icon-blue">↗</span>
+                    </div>
+                    <div class="stat-value">
+                        {{ estadisticas.cantidad_ventas | default(0) }}
+                    </div>
+                    <div class="stat-description">
+                        Transacciones almacenadas
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Unidades vendidas</span>
+                        <span class="stat-icon icon-purple">▦</span>
+                    </div>
+                    <div class="stat-value">
+                        {{ estadisticas.unidades_vendidas | default(0) }}
+                    </div>
+                    <div class="stat-description">
+                        Unidades despachadas en total
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Ingresos acumulados</span>
+                        <span class="stat-icon icon-green">Q</span>
+                    </div>
+                    <div class="stat-value">
+                        Q {{ "{:,.2f}".format(estadisticas.ingresos | default(0, true) | float) }}
+                    </div>
+                    <div class="stat-description">
+                        Suma de las ventas registradas
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- GRÁFICA -->
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Comportamiento de las ventas</h2>
+                        <p class="panel-description">
+                            Explorá los importes y las unidades de las transacciones.
+                        </p>
+                    </div>
+
+                    <div class="chart-controls">
+                        <button class="control-button active"
+                                data-mode="total" type="button">
+                            Importe
+                        </button>
+                        <button class="control-button"
+                                data-mode="quantity" type="button">
+                            Unidades
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chart-area">
+                    <div class="chart-summary">
+                        <div>
+                            <div class="chart-total" id="chartTotal">Q 0.00</div>
+                            <div class="chart-caption" id="chartCaption">
+                                Importe de las ventas mostradas
+                            </div>
+                        </div>
+
+                        <div class="chart-legend">
+                            <span class="legend-dot" id="legendDot"></span>
+                            <span id="legendText">Total por transacción</span>
+                        </div>
+                    </div>
+
+                    {% if estadisticas.ventas %}
+
+                    <div class="chart-scroll">
+                        <svg id="salesChart"
+                             class="chart-svg"
+                             viewBox="0 0 760 270"
+                             role="img"
+                             aria-label="Gráfica interactiva de ventas">
+
+                            <defs>
+                                <linearGradient id="areaGradient"
+                                                x1="0" y1="0"
+                                                x2="0" y2="1">
+                                    <stop offset="0%"
+                                          stop-color="#7955F5"
+                                          stop-opacity=".24"/>
+                                    <stop offset="100%"
+                                          stop-color="#3478F6"
+                                          stop-opacity=".015"/>
+                                </linearGradient>
+
+                                <linearGradient id="lineGradient"
+                                                x1="0" y1="0"
+                                                x2="1" y2="0">
+                                    <stop offset="0%" stop-color="#3478F6"/>
+                                    <stop offset="100%" stop-color="#A995FF"/>
+                                </linearGradient>
+                            </defs>
+
+                            <g id="chartGrid"></g>
+
+                            <path id="chartArea"
+                                  fill="url(#areaGradient)"
+                                  d=""></path>
+
+                            <path id="chartLine"
+                                  fill="none"
+                                  stroke="url(#lineGradient)"
+                                  stroke-width="3.5"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d=""></path>
+
+                            <g id="chartPoints"></g>
+                            <g id="chartLabels"></g>
+                        </svg>
+                    </div>
+
+                    <div class="chart-caption" id="chartHelp">
+                        Pasá el cursor sobre un punto para consultar el detalle.
+                    </div>
+
+                    {% else %}
+
+                    <div class="chart-empty">
+                        Todavía no hay ventas registradas para mostrar.
+                        Registrá una venta y aparecerá aquí.
+                    </div>
+
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- HISTORIAL -->
+            <div class="section-heading">
+                <h2 class="section-title">Historial de transacciones</h2>
+                <span class="section-note">Consulta, búsqueda y filtros</span>
+            </div>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Registro de ventas</h2>
+                        <p class="panel-description">
+                            Buscá, filtrá y ordená las operaciones registradas.
+                        </p>
+                    </div>
+
+                    <span class="record-count" id="recordCount">
+                        {{ estadisticas.ventas | length }} registros
+                    </span>
+                </div>
+
+                {% if estadisticas.ventas %}
+
+                <div class="filters">
+                    <div class="search-box">
+                        <span class="search-icon">⌕</span>
+                        <input id="searchInput"
+                               type="search"
+                               placeholder="Buscar producto, código o vendedor..."
+                               aria-label="Buscar ventas">
+                    </div>
+
+                    <select id="sellerFilter"
+                            class="select-control"
+                            aria-label="Filtrar por vendedor">
+                        <option value="">Todos los vendedores</option>
+                        {% for vendedor in estadisticas.ventas | map(attribute='usuario') | unique | sort %}
+                        <option value="{{ vendedor | e }}">{{ vendedor }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="sortFilter"
+                            class="select-control"
+                            aria-label="Ordenar ventas">
+                        <option value="newest">Más recientes primero</option>
+                        <option value="oldest">Más antiguas primero</option>
+                        <option value="high">Mayor importe primero</option>
+                        <option value="low">Menor importe primero</option>
+                    </select>
+
+                    <button id="resetFilters"
+                            class="control-button"
+                            type="button">
+                        Limpiar filtros
+                    </button>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="sales-table" id="salesTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <button type="button" data-sort="date">
+                                        Fecha y hora ↕
+                                    </button>
+                                </th>
+                                <th>
+                                    <button type="button" data-sort="seller">
+                                        Vendedor ↕
+                                    </button>
+                                </th>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>
+                                    <button type="button" data-sort="quantity">
+                                        Cantidad ↕
+                                    </button>
+                                </th>
+                                <th>Precio unitario</th>
+                                <th>
+                                    <button type="button" data-sort="total">
+                                        Total ↕
+                                    </button>
+                                </th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="salesBody">
+                            {% for venta in estadisticas.ventas %}
+                            <tr
+                                data-date="{{ venta.fecha | string | e }}"
+                                data-seller="{{ venta.usuario | string | e }}"
+                                data-code="{{ venta.codigo | string | e }}"
+                                data-product="{{ venta.producto | string | e }}"
+                                data-quantity="{{ venta.cantidad | float }}"
+                                data-price="{{ venta.precio_unitario | default(0, true) | float }}"
+                                data-total="{{ venta.total | float }}"
+                            >
+                                <td class="date">{{ venta.fecha }}</td>
+
+                                <td class="sale-user">{{ venta.usuario }}</td>
+
+                                <td>
+                                    <span class="product-code">
+                                        {{ venta.codigo }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="product-name">
+                                        {{ venta.producto }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="quantity">
+                                        {{ venta.cantidad }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Q {{ "{:,.2f}".format(venta.precio_unitario | default(0, true) | float) }}
+                                </td>
+
+                                <td class="money">
+                                    Q {{ "{:,.2f}".format(venta.total | float) }}
+                                </td>
+
+                                <td>
+                                    <span class="status">Registrada</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="no-results" id="noResults">
+                    No se encontraron ventas con esos criterios.
+                    Probá cambiar la búsqueda o los filtros.
+                </div>
+
+                <div class="pagination">
+                    <div class="pagination-text" id="paginationText">
+                        Mostrando registros
+                    </div>
+
+                    <div class="pagination-buttons">
+                        <button type="button"
+                                class="page-button"
+                                id="prevPage">
+                            ← Anterior
+                        </button>
+
+                        <button type="button"
+                                class="page-button"
+                                id="nextPage">
+                            Siguiente →
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    Los importes corresponden a las transacciones almacenadas
+                    en el archivo de ventas del sistema.
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <div class="empty-icon">◈</div>
+                    <div class="empty-title">
+                        Todavía no hay ventas registradas
+                    </div>
+                    <p class="empty-text">
+                        Cuando registrés una venta, sus datos aparecerán aquí
+                        y actualizarán los indicadores y la gráfica.
+                    </p>
+                    <a href="{{ url_for('ver_ventas') }}"
+                       class="primary-button">
+                        + Registrar primera venta
+                    </a>
+                </div>
+
+                {% endif %}
+            </section>
+
+            <!-- PIE DE PÁGINA -->
+            <footer class="footer">
+                <div>
+                    <span class="footer-brand">NEXORA</span>
+                    GAMING & TECHNOLOGY
+                </div>
+                <div>Panel de gestión del negocio</div>
+            </footer>
+
+        </div>
+    </main>
+</div>
+
+<script>
+/* =========================================
+   GRÁFICA, BÚSQUEDA, FILTROS Y PAGINACIÓN
+   ========================================= */
+
+(function () {
+    const rows = Array.from(document.querySelectorAll("#salesBody tr"));
+    const searchInput = document.getElementById("searchInput");
+    const sellerFilter = document.getElementById("sellerFilter");
+    const sortFilter = document.getElementById("sortFilter");
+    const resetFilters = document.getElementById("resetFilters");
+    const pageSize = 8;
+
+    let currentPage = 1;
+    let sortKey = "";
+    let sortDirection = 1;
+    let chartMode = "total";
+
+    const money = value => "Q " + Number(value || 0).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    function getFilteredRows() {
+        const query = (searchInput?.value || "")
+            .trim().toLocaleLowerCase("es");
+
+        const seller = (sellerFilter?.value || "")
+            .toLocaleLowerCase("es");
+
+        const filtered = rows.filter(row => {
+            const searchable = [
+                row.dataset.date,
+                row.dataset.seller,
+                row.dataset.code,
+                row.dataset.product
+            ].join(" ").toLocaleLowerCase("es");
+
+            return searchable.includes(query) &&
+                (!seller ||
+                (row.dataset.seller || "").toLocaleLowerCase("es") === seller);
+        });
+
+        const sort = sortKey || sortFilter?.value || "newest";
+
+        filtered.sort((a, b) => {
+            const fechaA = a.dataset.date || "";
+            const fechaB = b.dataset.date || "";
+
+            switch (sort) {
+                case "newest":
+                    return fechaB.localeCompare(fechaA);
+
+                case "oldest":
+                    return fechaA.localeCompare(fechaB);
+
+                case "date":
+                    return fechaA.localeCompare(fechaB) * sortDirection;
+
+                case "high":
+                    return Number(b.dataset.total) - Number(a.dataset.total);
+
+                case "low":
+                    return Number(a.dataset.total) - Number(b.dataset.total);
+
+                case "total":
+                    return (Number(a.dataset.total) -
+                        Number(b.dataset.total)) * sortDirection;
+
+                case "quantity":
+                    return (Number(a.dataset.quantity) -
+                        Number(b.dataset.quantity)) * sortDirection;
+
+                case "seller":
+                    return (a.dataset.seller || "").localeCompare(
+                        b.dataset.seller || "", "es"
+                    ) * sortDirection;
+
+                default:
+                    return 0;
+            }
+        });
+
+        return filtered;
+    }
+
+    function updateTable() {
+        if (!rows.length) return;
+
+        const filtered = getFilteredRows();
+        const pageCount = Math.max(
+            1, Math.ceil(filtered.length / pageSize)
+        );
+
+        currentPage = Math.min(currentPage, pageCount);
+
+        rows.forEach(row => {
+            row.style.display = "none";
+        });
+
+        const start = (currentPage - 1) * pageSize;
+        const visible = filtered.slice(start, start + pageSize);
+        const salesBody = document.getElementById("salesBody");
+
+        visible.forEach(row => {
+            row.style.display = "";
+            salesBody.appendChild(row);
+        });
+
+        const noResults = document.getElementById("noResults");
+
+        noResults.style.display = filtered.length ? "none" : "block";
+
+        document.getElementById("salesTable").style.display =
+            filtered.length ? "table" : "none";
+
+        document.getElementById("recordCount").textContent =
+            filtered.length +
+            (filtered.length === 1 ? " registro" : " registros");
+
+        document.getElementById("paginationText").textContent =
+            filtered.length
+                ? `Mostrando ${start + 1}–${Math.min(
+                    start + pageSize, filtered.length
+                  )} de ${filtered.length} ventas`
+                : "No hay registros para mostrar";
+
+        document.getElementById("prevPage").disabled =
+            currentPage <= 1 || filtered.length === 0;
+
+        document.getElementById("nextPage").disabled =
+            currentPage >= pageCount || filtered.length === 0;
+
+        updateChart(filtered);
+    }
+
+    function updateChart(filtered) {
+        const svg = document.getElementById("salesChart");
+        if (!svg) return;
+
+        const pointsGroup = document.getElementById("chartPoints");
+        const labelsGroup = document.getElementById("chartLabels");
+        const gridGroup = document.getElementById("chartGrid");
+        const line = document.getElementById("chartLine");
+        const area = document.getElementById("chartArea");
+
+        pointsGroup.replaceChildren();
+        labelsGroup.replaceChildren();
+        gridGroup.replaceChildren();
+
+        const data = filtered.slice().reverse();
+
+        const values = data.map(row => Number(
+            chartMode === "total"
+                ? row.dataset.total
+                : row.dataset.quantity
+        ));
+
+        const sum = values.reduce((total, value) => total + value, 0);
+
+        document.getElementById("chartTotal").textContent =
+            chartMode === "total"
+                ? money(sum)
+                : sum.toLocaleString("es-GT");
+
+        document.getElementById("chartCaption").textContent =
+            chartMode === "total"
+                ? "Suma de los importes de las ventas filtradas"
+                : "Suma de unidades de las ventas filtradas";
+
+        document.getElementById("legendText").textContent =
+            chartMode === "total"
+                ? "Total por transacción"
+                : "Unidades por transacción";
+
+        document.getElementById("legendDot").style.background =
+            chartMode === "total" ? "#A995FF" : "#67E8F9";
+
+        if (!data.length) {
+            line.setAttribute("d", "");
+            area.setAttribute("d", "");
+
+            document.getElementById("chartHelp").textContent =
+                "No hay datos para graficar con los filtros actuales.";
+
+            return;
+        }
+
+        const width = 760;
+        const height = 270;
+        const left = 65;
+        const right = 20;
+        const top = 20;
+        const bottom = 43;
+        const plotWidth = width - left - right;
+        const plotHeight = height - top - bottom;
+        const maxValue = Math.max(...values, 1);
+
+        for (let i = 0; i <= 4; i++) {
+            const y = top + plotHeight - (i / 4) * plotHeight;
+            const labelValue = (maxValue / 4) * i;
+
+            const gridLine = document.createElementNS(
+                "http://www.w3.org/2000/svg", "line"
+            );
+
+            gridLine.setAttribute("x1", left);
+            gridLine.setAttribute("x2", width - right);
+            gridLine.setAttribute("y1", y);
+            gridLine.setAttribute("y2", y);
+            gridLine.setAttribute("stroke", "#354361");
+            gridLine.setAttribute("stroke-dasharray", "4 5");
+
+            gridGroup.appendChild(gridLine);
+
+            const label = document.createElementNS(
+                "http://www.w3.org/2000/svg", "text"
+            );
+
+            label.setAttribute("x", left - 10);
+            label.setAttribute("y", y + 4);
+            label.setAttribute("text-anchor", "end");
+
+            label.textContent = chartMode === "total"
+                ? (labelValue >= 1000
+                    ? "Q" + (labelValue / 1000).toFixed(1) + "k"
+                    : "Q" + labelValue.toFixed(0))
+                : labelValue.toFixed(0);
+
+            labelsGroup.appendChild(label);
+        }
+
+        const coords = values.map((value, index) => ({
+            x: data.length === 1
+                ? left + plotWidth / 2
+                : left + (index / (data.length - 1)) * plotWidth,
+            y: top + plotHeight - (value / maxValue) * plotHeight,
+            value,
+            row: data[index]
+        }));
+
+        const path = coords.map((point, index) =>
+            `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`
+        ).join(" ");
+
+        line.setAttribute("d", path);
+
+        area.setAttribute(
+            "d",
+            `${path} L ${coords[coords.length - 1].x} ${
+                top + plotHeight
+            } L ${coords[0].x} ${top + plotHeight} Z`
+        );
+
+        const labelCount = Math.min(coords.length, 7);
+
+        coords.forEach((point, index) => {
+            const circle = document.createElementNS(
+                "http://www.w3.org/2000/svg", "circle"
+            );
+
+            circle.setAttribute("cx", point.x);
+            circle.setAttribute("cy", point.y);
+            circle.setAttribute("r", "4.5");
+            circle.setAttribute(
+                "fill",
+                chartMode === "total" ? "#A995FF" : "#67E8F9"
+            );
+            circle.setAttribute("stroke", "#1A2641");
+            circle.setAttribute("stroke-width", "2");
+            circle.setAttribute("class", "chart-point");
+
+            const tooltip = document.createElementNS(
+                "http://www.w3.org/2000/svg", "title"
+            );
+
+            tooltip.textContent =
+                `${point.row.dataset.product} · ${point.row.dataset.date} · ` +
+                (chartMode === "total"
+                    ? money(point.value)
+                    : `${point.value} unidades`);
+
+            circle.appendChild(tooltip);
+            pointsGroup.appendChild(circle);
+
+            if (
+                coords.length <= labelCount ||
+                index % Math.ceil(coords.length / labelCount) === 0 ||
+                index === coords.length - 1
+            ) {
+                const label = document.createElementNS(
+                    "http://www.w3.org/2000/svg", "text"
+                );
+
+                label.setAttribute("x", point.x);
+                label.setAttribute("y", height - 15);
+                label.setAttribute("text-anchor", "middle");
+                label.textContent =
+                    (point.row.dataset.date || "").slice(0, 10);
+
+                labelsGroup.appendChild(label);
+            }
+        });
+
+        document.getElementById("chartHelp").textContent =
+            "Mostrando " + data.length +
+            (data.length === 1
+                ? " transacción. "
+                : " transacciones. ") +
+            "Pasá el cursor sobre un punto para ver el detalle.";
+    }
+
+    searchInput?.addEventListener("input", () => {
+        currentPage = 1;
+        updateTable();
+    });
+
+    sellerFilter?.addEventListener("change", () => {
+        currentPage = 1;
+        updateTable();
+    });
+
+    sortFilter?.addEventListener("change", () => {
+        sortKey = "";
+        currentPage = 1;
+        updateTable();
+    });
+
+    resetFilters?.addEventListener("click", () => {
+        if (searchInput) searchInput.value = "";
+        if (sellerFilter) sellerFilter.value = "";
+        if (sortFilter) sortFilter.value = "newest";
+
+        sortKey = "";
+        sortDirection = 1;
+        currentPage = 1;
+
+        updateTable();
+    });
+
+    document.getElementById("prevPage")?.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateTable();
+        }
+    });
+
+    document.getElementById("nextPage")?.addEventListener("click", () => {
+        const filtered = getFilteredRows();
+        const pageCount = Math.max(
+            1, Math.ceil(filtered.length / pageSize)
+        );
+
+        if (currentPage < pageCount) {
+            currentPage++;
+            updateTable();
+        }
+    });
+
+    document.querySelectorAll("[data-sort]").forEach(button => {
+        button.addEventListener("click", () => {
+            const nextKey = button.dataset.sort;
+
+            sortDirection = sortKey === nextKey
+                ? -sortDirection
+                : 1;
+
+            sortKey = nextKey;
+            currentPage = 1;
+
+            updateTable();
+        });
+    });
+
+    document.querySelectorAll("[data-mode]").forEach(button => {
+        button.addEventListener("click", () => {
+            chartMode = button.dataset.mode;
+
+            document.querySelectorAll("[data-mode]").forEach(item => {
+                item.classList.toggle("active", item === button);
+            });
+
+            updateChart(getFilteredRows());
+        });
+    });
+
+    updateTable();
+})();
+
+/* =========================================
+   MENÚ LATERAL: COMPUTADORA Y CELULAR
+   ========================================= */
+
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+const menuToggle = document.getElementById("menuToggle");
+const main = document.getElementById("main");
+
+function actualizarEstadoBoton() {
+    const esMovil = window.innerWidth <= 760;
+
+    if (esMovil) {
+        const abierto = sidebar.classList.contains("open");
+
+        menuToggle.setAttribute("aria-expanded", String(abierto));
+        menuToggle.setAttribute(
+            "aria-label",
+            abierto ? "Cerrar menú" : "Abrir menú"
+        );
+    } else {
+        const oculto = sidebar.classList.contains("hidden");
+
+        menuToggle.setAttribute("aria-expanded", String(!oculto));
+        menuToggle.setAttribute(
+            "aria-label",
+            oculto ? "Mostrar menú" : "Ocultar menú"
+        );
+    }
+}
+
+function abrirMenuMovil() {
+    sidebar.classList.remove("hidden");
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+    actualizarEstadoBoton();
+}
+
+function cerrarMenuMovil() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    actualizarEstadoBoton();
+}
+
+menuToggle.addEventListener("click", function () {
+    if (window.innerWidth <= 760) {
+        if (sidebar.classList.contains("open")) {
+            cerrarMenuMovil();
+        } else {
+            abrirMenuMovil();
+        }
+    } else {
+        sidebar.classList.toggle("hidden");
+
+        const oculto = sidebar.classList.contains("hidden");
+        main.classList.toggle("expanded", oculto);
+
+        actualizarEstadoBoton();
+    }
+});
+
+overlay.addEventListener("click", cerrarMenuMovil);
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        cerrarMenuMovil();
+    }
+});
+
+window.addEventListener("resize", function () {
+    if (window.innerWidth > 760) {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+
+        const oculto = sidebar.classList.contains("hidden");
+        main.classList.toggle("expanded", oculto);
+    } else {
+        sidebar.classList.remove("hidden");
+        main.classList.remove("expanded");
+    }
+
+    actualizarEstadoBoton();
+});
+
+actualizarEstadoBoton();
+</script>
+
+</body>
+</html>
