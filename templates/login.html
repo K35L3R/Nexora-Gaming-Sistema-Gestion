@@ -3,280 +3,579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXORA | Panel principal</title>
+    <title>Iniciar sesión | NEXORA</title>
+
     <style>
+        :root {
+            --navy: #101b35;
+            --navy-light: #1b2b4b;
+            --blue: #2563eb;
+            --cyan: #22d3ee;
+            --background: #f3f6fb;
+            --text: #182338;
+            --muted: #718096;
+            --border: #dfe6ef;
+            --white: #ffffff;
+            --danger: #b91c1c;
+            --danger-bg: #fef2f2;
+        }
+
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            color: #172b45;
-            display: flex;
+            margin: 0;
             min-height: 100vh;
-        }
-
-        aside {
-            width: 235px;
-            background: #09182b;
-            color: white;
-            padding: 28px 18px;
-        }
-
-        .logo {
-            color: #49c5ff;
-            font-size: 25px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            margin: 0 10px 5px;
-        }
-
-        .subtitulo {
-            color: #91a9c4;
-            font-size: 10px;
-            margin: 0 10px 35px;
-        }
-
-        .etiqueta {
-            color: #7189a4;
-            font-size: 11px;
-            margin: 25px 10px 12px;
-            text-transform: uppercase;
-        }
-
-        nav a {
-            display: block;
-            color: #d2deeb;
-            text-decoration: none;
-            padding: 13px 12px;
-            margin-bottom: 6px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        nav a:hover, nav a.activo {
-            background: #173453;
-            color: #49c5ff;
-        }
-
-        main {
-            flex: 1;
-            min-width: 0;
-        }
-
-        header {
-            background: white;
-            padding: 22px 32px;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        header p {
-            color: #64748b;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        .usuario {
-            font-size: 13px;
-            text-align: right;
-        }
-
-        .usuario span {
-            display: block;
-            color: #64748b;
-            margin-top: 5px;
-        }
-
-        .contenido {
-            padding: 32px;
-        }
-
-        .bienvenida {
-            margin-bottom: 28px;
-        }
-
-        .bienvenida p {
-            color: #64748b;
-            margin-top: 9px;
-            font-size: 14px;
-        }
-
-        .tarjetas {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 20px;
-        }
-
-        .tarjeta {
-            background: white;
-            padding: 23px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-        }
-
-        .tarjeta p {
-            color: #64748b;
-            font-size: 13px;
-        }
-
-        .tarjeta h2 {
-            margin-top: 17px;
-            font-size: 28px;
-            overflow-wrap: anywhere;
-        }
-
-        .azul {
-            color: #079bd8;
-        }
-
-        .seccion {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            justify-content: center;
             padding: 24px;
-            margin-top: 25px;
         }
 
-        .seccion p {
-            color: #64748b;
-            font-size: 14px;
-            margin-top: 10px;
+        .login-layout {
+            display: grid;
+            grid-template-columns: 1fr 0.9fr;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 590px;
+            background: var(--white);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 24px 70px rgba(16, 27, 53, 0.12);
+            border: 1px solid rgba(223, 230, 239, 0.8);
         }
 
-        .botones {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .boton {
-            display: inline-block;
-            background: #0b9ed8;
+        .brand-panel {
+            background:
+                radial-gradient(
+                    ellipse at 15% 15%,
+                    rgba(34, 211, 238, 0.13),
+                    transparent 36%
+                ),
+                linear-gradient(
+                    145deg,
+                    #101b35,
+                    #16294b 65%,
+                    #1c3a65
+                );
             color: white;
-            padding: 12px 16px;
-            text-decoration: none;
-            border-radius: 8px;
+            padding: 42px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-panel::before,
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .brand-panel::before {
+            width: 330px;
+            height: 330px;
+            right: -150px;
+            bottom: -80px;
+        }
+
+        .brand-panel::after {
+            width: 230px;
+            height: 230px;
+            right: -100px;
+            bottom: -30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: var(--blue);
+            color: white;
+            font-size: 23px;
+            font-weight: 800;
+            box-shadow: 0 8px 22px rgba(37, 99, 235, 0.3);
+        }
+
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .brand-subtitle {
+            color: #b5c6df;
+            font-size: 10px;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        .brand-content {
+            margin: auto 0;
+            padding: 48px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .eyebrow {
+            color: var(--cyan);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .brand-content h1 {
+            font-size: clamp(30px, 4vw, 43px);
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin: 0;
+            max-width: 420px;
+        }
+
+        .brand-content h1 span {
+            color: var(--cyan);
+        }
+
+        .brand-description {
+            max-width: 365px;
+            margin-top: 20px;
+            color: #c0cce0;
             font-size: 13px;
+            line-height: 1.9;
         }
 
-        .secundario {
-            background: #e7f5fc;
-            color: #0879a9;
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0 0;
+            display: grid;
+            gap: 14px;
         }
 
-        .salir {
-            color: #ffb7bd;
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: #e0e9f7;
         }
 
-        @media (max-width: 850px) {
+        .feature-check {
+            width: 23px;
+            height: 23px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 7px;
+            color: var(--cyan);
+            background: rgba(34, 211, 238, 0.12);
+            font-weight: 800;
+        }
+
+        .brand-footer {
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.13);
+            color: #a9b8d0;
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .form-panel {
+            padding: 48px 42px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-label {
+            color: var(--blue);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .form-panel h2 {
+            font-size: 27px;
+            letter-spacing: -0.8px;
+            margin: 0;
+            color: var(--navy);
+        }
+
+        .form-description {
+            margin: 11px 0 30px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .flash-message {
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            border-radius: 9px;
+            background: var(--danger-bg);
+            border: 1px solid #fecaca;
+            color: var(--danger);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8492a8;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .form-group input {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 14px 13px 42px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text);
+            background: #fbfcfe;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input::placeholder {
+            color: #a0acbd;
+        }
+
+        .form-group input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 8px 3px;
+        }
+
+        .password-input {
+            padding-right: 58px !important;
+        }
+
+        .submit-button {
+            width: 100%;
+            min-height: 49px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 9px;
+            background: var(--blue);
+            color: white;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .submit-button:hover {
+            background: #1d4ed8;
+        }
+
+        .submit-button:active {
+            transform: scale(0.99);
+        }
+
+        .security-note {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 19px;
+            color: var(--muted);
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .security-note span {
+            color: #15803d;
+        }
+
+        .form-footer {
+            border-top: 1px solid #edf1f6;
+            padding-top: 20px;
+            margin-top: 30px;
+            color: #94a3b8;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 760px) {
             body {
-                display: block;
+                padding: 16px;
+                align-items: flex-start;
             }
 
-            aside {
-                width: 100%;
-            }
-
-            nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 5px;
-            }
-
-            .etiqueta {
-                display: none;
-            }
-
-            .tarjetas {
+            .login-layout {
                 grid-template-columns: 1fr;
+                max-width: 480px;
+                min-height: auto;
+                margin: auto;
             }
 
-            .contenido {
-                padding: 20px;
+            .brand-panel {
+                padding: 25px;
             }
 
-            header {
-                padding: 20px;
+            .brand-content {
+                padding: 32px 0 25px;
+            }
+
+            .brand-content h1 {
+                font-size: 30px;
+            }
+
+            .feature-list {
+                gap: 10px;
+                margin-top: 22px;
+            }
+
+            .brand-footer {
+                padding-top: 15px;
+            }
+
+            .form-panel {
+                padding: 32px 25px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .brand-panel,
+            .form-panel {
+                padding: 22px 18px;
+            }
+
+            .brand-content h1 {
+                font-size: 27px;
             }
         }
     </style>
 </head>
+
 <body>
-    <aside>
-        <div class="logo">NEXORA</div>
-        <div class="subtitulo">GAMING & TECHNOLOGY</div>
+    <main class="login-layout">
 
-        <nav>
-            <div class="etiqueta">Menú principal</div>
-            <a href="{{ url_for('dashboard') }}" class="activo">▦ &nbsp; Panel principal</a>
-            <a href="{{ url_for('ver_inventario') }}">▤ &nbsp; Inventario</a>
-            <a href="#">▣ &nbsp; Ventas</a>
-            <a href="#">▥ &nbsp; Estadísticas</a>
+        <!-- Identidad comercial de NEXORA -->
+        <section class="brand-panel">
 
-            <div class="etiqueta">Cuenta</div>
-            <a href="{{ url_for('cerrar_sesion') }}" class="salir">↪ &nbsp; Cerrar sesión</a>
-        </nav>
-    </aside>
+            <div class="brand">
+                <div class="brand-icon">N</div>
 
-    <main>
-        <header>
-            <div>
-                <h3>Panel principal</h3>
-                <p>Sistema de gestión empresarial</p>
+                <div>
+                    <div class="brand-name">NEXORA</div>
+                    <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
+                </div>
             </div>
 
-            <div class="usuario">
-                {{ usuario }}
-                <span>{{ rol }}</span>
+            <div class="brand-content">
+                <div class="eyebrow">
+                    Gaming · Tecnología · Innovación
+                </div>
+
+                <h1>
+                    Todo lo que necesitás
+                    <span>para jugar y conectar.</span>
+                </h1>
+
+                <p class="brand-description">
+                    Descubrí productos tecnológicos, componentes de
+                    computadora y videojuegos pensados para llevar
+                    tu experiencia digital al siguiente nivel.
+                </p>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-check">✓</span>
+                        Componentes y accesorios para computadora
+                    </li>
+
+                    <li>
+                        <span class="feature-check">✓</span>
+                        Equipos y periféricos tecnológicos
+                    </li>
+
+                    <li>
+                        <span class="feature-check">✓</span>
+                        Videojuegos y productos gaming
+                    </li>
+                </ul>
             </div>
-        </header>
 
-        <div class="contenido">
-            <section class="bienvenida">
-                <h1>¡Bienvenido, {{ usuario }}!</h1>
-                <p>Este es el resumen general de NEXORA.</p>
-            </section>
+            <div class="brand-footer">
+                NEXORA Gaming & Technology<br>
+                Tecnología, entretenimiento y rendimiento
+            </div>
 
-            <section class="tarjetas">
-                <div class="tarjeta">
-                    <p>Productos registrados</p>
-                    <h2>{{ total_productos }}</h2>
+        </section>
+
+        <!-- Formulario de acceso al sistema -->
+        <section class="form-panel">
+
+            <div class="form-label">Acceso al sistema</div>
+
+            <h2>Bienvenido de nuevo</h2>
+
+            <p class="form-description">
+                Ingresá tus credenciales para acceder al panel de gestión.
+            </p>
+
+            {% with mensajes = get_flashed_messages() %}
+                {% if mensajes %}
+                    {% for mensaje in mensajes %}
+                        <div class="flash-message" role="alert">
+                            {{ mensaje }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('login') }}">
+
+                <div class="form-group">
+                    <label for="usuario">Nombre de usuario</label>
+
+                    <div class="input-wrapper">
+                        <span class="input-icon">♙</span>
+
+                        <input
+                            type="text"
+                            id="usuario"
+                            name="usuario"
+                            placeholder="Ingresá tu usuario"
+                            autocomplete="username"
+                            required
+                            autofocus
+                        >
+                    </div>
                 </div>
 
-                <div class="tarjeta">
-                    <p>Unidades disponibles</p>
-                    <h2 class="azul">{{ unidades }}</h2>
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+
+                    <div class="input-wrapper">
+                        <span class="input-icon">⌑</span>
+
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            class="password-input"
+                            placeholder="Ingresá tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="togglePassword"
+                            aria-label="Mostrar contraseña"
+                        >
+                            Mostrar
+                        </button>
+                    </div>
                 </div>
 
-                <div class="tarjeta">
-                    <p>Valor del inventario</p>
-                    <h2>Q {{ "%.2f"|format(valor_inventario) }}</h2>
-                </div>
-            </section>
+                <button type="submit" class="submit-button">
+                    Iniciar sesión &nbsp; →
+                </button>
 
-            <section class="seccion">
-                <h3>Accesos rápidos</h3>
-                <p>Seleccioná una opción para administrar los productos del negocio.</p>
+            </form>
 
-                <div class="botones">
-                    <a class="boton" href="{{ url_for('ver_inventario') }}">
-                        Administrar inventario
-                    </a>
+            <div class="security-note">
+                <span>●</span>
+                Acceso mediante credenciales de usuario
+            </div>
 
-                    <a class="boton secundario" href="{{ url_for('cerrar_sesion') }}">
-                        Cerrar sesión
-                    </a>
-                </div>
-            </section>
-        </div>
+            <div class="form-footer">
+                NEXORA Gaming & Technology<br>
+                Proyecto universitario · Gestión de inventario y ventas
+            </div>
+
+        </section>
+
     </main>
+
+    <script>
+        const campoContrasena = document.getElementById("contrasena");
+        const botonMostrar = document.getElementById("togglePassword");
+
+        botonMostrar.addEventListener("click", function () {
+            if (campoContrasena.type === "password") {
+                campoContrasena.type = "text";
+                botonMostrar.textContent = "Ocultar";
+                botonMostrar.setAttribute(
+                    "aria-label",
+                    "Ocultar contraseña"
+                );
+            } else {
+                campoContrasena.type = "password";
+                botonMostrar.textContent = "Mostrar";
+                botonMostrar.setAttribute(
+                    "aria-label",
+                    "Mostrar contraseña"
+                );
+            }
+        });
+    </script>
 </body>
 </html>
