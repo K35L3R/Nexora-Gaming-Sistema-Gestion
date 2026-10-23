@@ -1,4 +1,3 @@
-```python
 # ==========================================
 # USUARIOS
 # NEXORA GAMING & TECHNOLOGY
@@ -59,4 +58,3 @@ def iniciar_sesion():
     print("Acceso bloqueado.")
 
     return None, None
-```
