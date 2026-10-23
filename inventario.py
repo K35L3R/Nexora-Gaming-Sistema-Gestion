@@ -2,7 +2,6 @@
 import csv
 import os
 import math
-from urllib.parse import quote
 
 CARPETA = os.path.dirname(os.path.abspath(__file__))
 ARCHIVO = os.path.join(CARPETA, "productos.csv")
@@ -23,9 +22,6 @@ IMAGENES = {
     "Consola": "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80",
     "Accesorio": "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80"
 }
-
-# Catalogo inicial: 10 categorias con 10 productos cada una.
-# Los precios son de ejemplo y deben ajustarse a tus proveedores.
 
 CATALOGO = [
     ("Laptop", [
@@ -153,7 +149,6 @@ CATALOGO = [
 
 def crear_catalogo_inicial():
     iniciales = []
-
     numero = 1
 
     for categoria, articulos in CATALOGO:
@@ -171,13 +166,17 @@ def crear_catalogo_inicial():
 
 
 def guardar_productos():
-    with open(ARCHIVO, "w", newline="", encoding="utf-8") as archivo:
+    temporal = ARCHIVO + ".tmp"
+
+    with open(temporal, "w", newline="", encoding="utf-8") as archivo:
         escritor = csv.DictWriter(
             archivo,
             fieldnames=CAMPOS
         )
         escritor.writeheader()
         escritor.writerows(productos)
+
+    os.replace(temporal, ARCHIVO)
 
 
 def cargar_productos():
@@ -188,22 +187,38 @@ def cargar_productos():
             lector = csv.DictReader(archivo)
 
             for fila in lector:
-                producto = {
-                    "codigo": fila.get("codigo", "").strip().upper(),
-                    "nombre": fila.get("nombre", "").strip(),
-                    "precio": float(fila.get("precio", 0)),
-                    "stock": int(fila.get("stock", 0)),
-                    "imagen": fila.get("imagen", "").strip()
-                }
+                codigo = (fila.get("codigo") or "").strip().upper()
+                nombre = (fila.get("nombre") or "").strip()
 
-                if not producto["imagen"]:
-                    producto["imagen"] = IMAGENES["Accesorio"]
+                if not codigo or not nombre:
+                    continue
 
-                productos.append(producto)
+                try:
+                    precio = float(fila.get("precio") or 0)
+                    stock = int(fila.get("stock") or 0)
+                except (ValueError, TypeError):
+                    continue
 
-    # Si no hay productos, cargar el catalogo de 100.
+                if not math.isfinite(precio) or stock < 0:
+                    continue
+
+                imagen = (fila.get("imagen") or "").strip()
+
+                productos.append({
+                    "codigo": codigo,
+                    "nombre": nombre,
+                    "precio": precio,
+                    "stock": stock,
+                    "imagen": imagen or IMAGENES["Accesorio"]
+                })
+
+    # Crear el catálogo inicial solamente si el inventario está vacío.
     if not productos:
         productos.extend(crear_catalogo_inicial())
+        guardar_productos()
+
+    # Actualizar el formato del CSV antiguo para incluir la columna imagen.
+    else:
         guardar_productos()
 
 
@@ -257,7 +272,9 @@ def agregar_producto(codigo, nombre, precio, stock, imagen=""):
         stock = int(texto_stock)
 
     except (ValueError, TypeError):
-        raise ValueError("El stock debe ser un entero igual o mayor que cero.")
+        raise ValueError(
+            "El stock debe ser un entero igual o mayor que cero."
+        )
 
     producto = {
         "codigo": codigo,
@@ -296,5 +313,4 @@ def eliminar_producto(codigo):
         raise
 
 
-# Cargar el inventario al iniciar el modulo.
 cargar_productos()
