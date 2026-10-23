@@ -4,540 +4,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXORA | Inventario</title>
+    <title>Inventario | NEXORA Gaming & Technology</title>
 
     <style>
         :root {
-            --fondo: #10172E;
-            --fondo-secundario: #151E39;
-            --panel: #1D2947;
-            --panel-hover: #263555;
-            --borde: #2C3959;
-            --morado: #7955F5;
-            --morado-claro: #A995FF;
-            --azul: #3478F6;
-            --azul-claro: #75A6FF;
-            --texto: #E5EBFA;
-            --texto-secundario: #9AAACA;
-            --verde: #48D6A0;
-            --rojo: #FF7185;
-            --amarillo: #FFD166;
+            --fondo: #0b0d17;
+            --panel: #151827;
+            --panel2: #1b2033;
+            --borde: #2b3047;
+            --texto: #f2f3fa;
+            --secundario: #a6acc4;
+            --morado: #9b7bff;
+            --azul: #56c8ff;
+            --verde: #4ade80;
+            --rojo: #fb7185;
+            --amarillo: #facc15;
         }
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            min-height: 100vh;
-            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
             background: var(--fondo);
             color: var(--texto);
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
+        .layout {
+            display: flex;
+            min-height: 100vh;
         }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        /* BARRA LATERAL */
 
         .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-            width: 250px;
-            padding: 25px 17px;
-            background: #121B35;
+            width: 245px;
+            flex-shrink: 0;
+            background: #101321;
             border-right: 1px solid var(--borde);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            transition: transform .25s ease;
-        }
-
-        .sidebar.hidden {
-            transform: translateX(-100%);
+            padding: 25px 16px;
         }
 
         .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 9px 28px;
-            border-bottom: 1px solid var(--borde);
+            font-size: 23px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 0 0 6px;
         }
 
-        .brand-logo {
-            width: 43px;
-            height: 43px;
-            border-radius: 14px;
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, var(--morado), var(--azul));
-            color: white;
-            font-size: 22px;
-            font-weight: 900;
-            box-shadow: 0 5px 20px rgba(94, 82, 245, .23);
-        }
-
-        .brand-name {
-            font-size: 17px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            color: #F2F4FF;
+        .brand span {
+            color: var(--morado);
         }
 
         .brand-subtitle {
-            margin-top: 4px;
-            font-size: 9px;
-            letter-spacing: 1.1px;
-            color: var(--texto-secundario);
-        }
-
-        .nav-label {
-            padding: 27px 11px 12px;
-            color: #7485A8;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-        }
-
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            min-height: 47px;
-            padding: 12px 13px;
-            border: 1px solid transparent;
-            border-radius: 11px;
-            color: #A6B4CF;
-            font-size: 13px;
-            font-weight: 600;
-            transition: .2s ease;
-        }
-
-        .nav-link:hover {
-            color: #FFFFFF;
-            background: rgba(52, 120, 246, .09);
-            border-color: rgba(52, 120, 246, .12);
-        }
-
-        .nav-link.active {
-            color: #FFFFFF;
-            background: linear-gradient(
-                110deg,
-                rgba(121, 85, 245, .24),
-                rgba(52, 120, 246, .14)
-            );
-            border-color: rgba(142, 119, 255, .25);
-            box-shadow: inset 3px 0 0 var(--morado);
-        }
-
-        .nav-icon {
-            width: 23px;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .sidebar-bottom {
-            margin-top: auto;
-            padding-top: 25px;
-        }
-
-        .system-card {
-            padding: 15px;
-            background: #1B2743;
-            border: 1px solid var(--borde);
-            border-radius: 13px;
-        }
-
-        .system-card-title {
+            color: var(--secundario);
             font-size: 11px;
-            font-weight: 800;
-            color: #DCE5FA;
+            letter-spacing: 1.5px;
+            margin-bottom: 35px;
         }
 
-        .system-card-description {
-            margin-top: 6px;
-            color: var(--texto-secundario);
-            font-size: 10px;
-            line-height: 1.6;
+        .user-card {
+            background: var(--panel);
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 25px;
         }
 
-        .system-indicator {
-            display: inline-block;
-            width: 7px;
-            height: 7px;
-            margin-right: 6px;
-            background: var(--verde);
-            border-radius: 50%;
+        .user-card strong {
+            display: block;
+            margin-bottom: 7px;
+            overflow-wrap: anywhere;
         }
 
-        /* CONTENIDO PRINCIPAL */
-
-        .main {
-            margin-left: 250px;
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    ellipse at 85% 0%,
-                    rgba(93, 66, 205, .11),
-                    transparent 33%
-                ),
-                var(--fondo);
-            transition: margin-left .25s ease;
+        .user-card small {
+            color: var(--secundario);
         }
 
-        .main.expanded {
-            margin-left: 0;
+        .menu-title {
+            color: var(--secundario);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 22px 10px 10px;
         }
 
-        /* BARRA SUPERIOR */
-
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 500;
-            min-height: 76px;
-            padding: 14px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            background: rgba(16, 23, 46, .94);
-            border-bottom: 1px solid var(--borde);
-            backdrop-filter: blur(14px);
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: var(--secundario);
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin: 5px 0;
+            transition: 0.2s;
         }
 
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            min-width: 0;
-        }
-
-        .breadcrumb {
-            color: var(--texto-secundario);
-            font-size: 12px;
-        }
-
-        .breadcrumb strong {
+        .menu a:hover,
+        .menu a.active {
+            background: #25203e;
             color: var(--texto);
         }
 
-        .menu-toggle {
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-            width: 39px;
-            height: 39px;
-            border: 1px solid var(--borde);
-            border-radius: 10px;
-            background: var(--panel);
-            color: white;
-            font-size: 21px;
-            cursor: pointer;
-            transition: background .2s ease, border-color .2s ease;
+        .menu a.active {
+            border-left: 3px solid var(--morado);
         }
 
-        .menu-toggle:hover {
-            background: var(--panel-hover);
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .topbar h1 {
+            font-size: 29px;
+            margin: 0 0 8px;
+        }
+
+        .topbar p {
+            margin: 0;
+            color: var(--secundario);
+        }
+
+        .logout {
+            color: var(--texto);
+            background: var(--panel);
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            padding: 11px 15px;
+            text-decoration: none;
+        }
+
+        .logout:hover {
             border-color: var(--morado);
         }
 
-        .menu-toggle:focus-visible {
-            outline: 2px solid var(--morado-claro);
-            outline-offset: 3px;
-        }
-
-        .topbar-user {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            min-width: 0;
-        }
-
-        .avatar {
-            width: 39px;
-            height: 39px;
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--morado), var(--azul));
-            color: white;
-            font-size: 17px;
-            font-weight: 800;
-        }
-
-        .user-name {
-            font-size: 12px;
-            font-weight: 750;
-            color: #F0F3FF;
-            overflow-wrap: anywhere;
-        }
-
-        .user-role {
-            margin-top: 4px;
-            color: var(--texto-secundario);
-            font-size: 10px;
-        }
-
-        .content {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 29px 30px;
-        }
-
-        /* ENCABEZADO */
-
-        .welcome {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 27px;
-        }
-
-        .eyebrow {
-            margin-bottom: 9px;
-            color: var(--morado-claro);
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 2px;
-        }
-
-        .page-title {
-            font-size: clamp(25px, 3vw, 34px);
-            font-weight: 850;
-            letter-spacing: -1px;
-            color: #F0F3FF;
-        }
-
-        .welcome-description {
-            margin-top: 9px;
-            color: var(--texto-secundario);
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .date-chip {
-            padding: 10px 14px;
-            border: 1px solid var(--borde);
-            border-radius: 10px;
-            background: rgba(29, 41, 71, .8);
-            color: #B5C4DF;
-            font-size: 11px;
-        }
-
-        /* MENSAJES */
-
-        .flash-list {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .flash {
-            padding: 13px 16px;
-            border: 1px solid var(--borde);
-            border-radius: 10px;
-            background: var(--panel);
-            color: var(--texto);
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        .flash.success {
-            border-color: rgba(72, 214, 160, .35);
-            background: rgba(72, 214, 160, .08);
-            color: #80E8BE;
-        }
-
-        .flash.error {
-            border-color: rgba(255, 113, 133, .35);
-            background: rgba(255, 113, 133, .08);
-            color: #FF9AA9;
-        }
-
-        .flash.warning {
-            border-color: rgba(255, 209, 102, .35);
-            background: rgba(255, 209, 102, .08);
-            color: #FFE09A;
-        }
-
-        /* ESTADÍSTICAS */
-
-        .section-heading {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 27px 0 15px;
-        }
-
-        .section-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #E7EDFB;
-        }
-
-        .section-note {
-            color: #8395B5;
-            font-size: 11px;
-        }
-
-        .stats-grid {
+        .stats {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 15px;
+            gap: 18px;
+            margin-bottom: 25px;
         }
 
         .stat-card {
-            position: relative;
-            min-width: 0;
-            overflow: hidden;
-            padding: 20px;
+            background: var(--panel);
             border: 1px solid var(--borde);
-            border-radius: 16px;
-            background: linear-gradient(145deg, #243352, #1C2845);
-            transition: transform .2s ease, border-color .2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(121, 85, 245, .6);
-        }
-
-        .stat-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .stat-label {
-            color: #AAB9D4;
-            font-size: 11px;
-            font-weight: 650;
-            line-height: 1.5;
-        }
-
-        .stat-icon {
-            display: grid;
-            place-items: center;
-            width: 39px;
-            height: 39px;
-            flex-shrink: 0;
-            border-radius: 12px;
-            font-size: 18px;
-        }
-
-        .icon-blue {
-            color: var(--azul-claro);
-            background: rgba(52, 120, 246, .16);
-        }
-
-        .icon-purple {
-            color: #B7A5FF;
-            background: rgba(121, 85, 245, .17);
-        }
-
-        .icon-green {
-            color: #65E2B4;
-            background: rgba(72, 214, 160, .12);
-        }
-
-        .stat-value {
-            margin-top: 20px;
-            color: #F0F3FF;
-            font-size: clamp(22px, 2.3vw, 30px);
-            font-weight: 850;
-            letter-spacing: -.7px;
-            overflow-wrap: anywhere;
-        }
-
-        .stat-description {
-            margin-top: 8px;
-            color: #8496B6;
-            font-size: 10px;
-            line-height: 1.5;
-        }
-
-        /* PANELES */
-
-        .panel {
-            min-width: 0;
-            overflow: hidden;
-            border: 1px solid var(--borde);
-            border-radius: 16px;
-            background: linear-gradient(145deg, #202D49, #1A2641);
-            box-shadow: 0 10px 28px rgba(4, 9, 25, .12);
-        }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 18px 20px;
-            border-bottom: 1px solid var(--borde);
-        }
-
-        .panel-title {
-            color: #E9EEFC;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .panel-description {
-            margin-top: 5px;
-            color: var(--texto-secundario);
-            font-size: 10px;
-            line-height: 1.6;
-        }
-
-        .panel-tag {
-            flex-shrink: 0;
-            padding: 6px 9px;
-            border-radius: 7px;
-            border: 1px solid rgba(121, 85, 245, .2);
-            background: rgba(121, 85, 245, .13);
-            color: #C1B5FF;
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: .6px;
-        }
-
-        .panel-body {
+            border-radius: 14px;
             padding: 22px;
         }
 
-        /* FORMULARIO */
+        .stat-card p {
+            color: var(--secundario);
+            margin: 0 0 12px;
+            font-size: 14px;
+        }
+
+        .stat-card h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .stat-card:nth-child(1) h2 {
+            color: var(--azul);
+        }
+
+        .stat-card:nth-child(2) h2 {
+            color: var(--morado);
+        }
+
+        .stat-card:nth-child(3) h2 {
+            color: var(--verde);
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            padding: 23px;
+            margin-bottom: 25px;
+        }
+
+        .panel-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .panel-heading h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .muted {
+            color: var(--secundario);
+            font-size: 13px;
+        }
 
         .form-grid {
             display: grid;
@@ -545,160 +217,89 @@
             gap: 17px;
         }
 
-        .form-group {
+        .field {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            min-width: 0;
         }
 
-        .form-group.full {
-            grid-column: 1 / -1;
+        .field label {
+            color: #d9dcef;
+            font-size: 13px;
         }
 
-        .form-label {
-            color: #C7D3EA;
-            font-size: 11px;
-            font-weight: 750;
-        }
-
-        .form-input {
+        .field input {
             width: 100%;
-            min-height: 44px;
-            padding: 12px 13px;
+            min-width: 0;
+            background: #0e1120;
             border: 1px solid var(--borde);
             border-radius: 9px;
-            outline: none;
-            background: #141F38;
+            padding: 12px;
             color: var(--texto);
-            font-size: 12px;
-            transition: border-color .2s ease, box-shadow .2s ease;
+            outline: none;
         }
 
-        .form-input::placeholder {
-            color: #7082A3;
-        }
-
-        .form-input:focus {
+        .field input:focus {
             border-color: var(--morado);
-            box-shadow: 0 0 0 3px rgba(121, 85, 245, .13);
         }
 
-        .form-help {
-            color: #8395B5;
-            font-size: 10px;
-            line-height: 1.5;
+        .field input[type="file"] {
+            padding: 9px;
+        }
+
+        .field-full {
+            grid-column: 1 / -1;
         }
 
         .form-actions {
             display: flex;
             align-items: center;
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 10px;
             margin-top: 20px;
         }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-height: 41px;
-            padding: 11px 16px;
-            border: 1px solid transparent;
+            border: 0;
             border-radius: 9px;
-            font-size: 11px;
-            font-weight: 800;
-            transition: background .2s ease, border-color .2s ease;
+            padding: 12px 17px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         .btn-primary {
-            background: linear-gradient(110deg, var(--morado), var(--azul));
-            color: white;
-            box-shadow: 0 5px 15px rgba(52, 120, 246, .15);
+            background: var(--morado);
+            color: #101020;
         }
 
         .btn-primary:hover {
-            filter: brightness(1.1);
+            filter: brightness(1.12);
         }
 
-        .btn-secondary {
-            border-color: var(--borde);
-            background: var(--panel);
-            color: #C8D5EC;
+        .btn-delete {
+            background: #3b1827;
+            border: 1px solid #713044;
+            color: #ffb6c3;
+            padding: 8px 10px;
+            font-size: 12px;
         }
 
-        .btn-secondary:hover {
-            background: var(--panel-hover);
-            border-color: var(--morado);
-        }
-
-        .btn-danger {
-            border-color: rgba(255, 113, 133, .28);
-            background: rgba(255, 113, 133, .09);
-            color: #FF9AA9;
-        }
-
-        .btn-danger:hover {
-            background: rgba(255, 113, 133, .17);
-            border-color: var(--rojo);
-        }
-
-        .btn-small {
-            min-height: 32px;
-            padding: 7px 10px;
-            font-size: 10px;
-        }
-
-        /* BÚSQUEDA Y TABLA */
-
-        .table-tools {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 17px 20px;
-            border-bottom: 1px solid var(--borde);
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            min-width: 180px;
-            max-width: 380px;
-        }
-
-        .search-input {
+        .search {
             width: 100%;
-            min-height: 40px;
-            padding: 10px 13px 10px 37px;
+            max-width: 330px;
+            background: #0e1120;
             border: 1px solid var(--borde);
-            border-radius: 9px;
-            outline: none;
-            background: #141F38;
             color: var(--texto);
-            font-size: 11px;
+            border-radius: 9px;
+            padding: 11px 13px;
+            outline: none;
         }
 
-        .search-input:focus {
+        .search:focus {
             border-color: var(--morado);
-            box-shadow: 0 0 0 3px rgba(121, 85, 245, .12);
-        }
-
-        .search-icon {
-            position: absolute;
-            top: 50%;
-            left: 13px;
-            transform: translateY(-50%);
-            color: #91A2C0;
-            font-size: 15px;
-            pointer-events: none;
-        }
-
-        .result-count {
-            color: var(--texto-secundario);
-            font-size: 10px;
         }
 
         .table-wrap {
@@ -706,856 +307,497 @@
             overflow-x: auto;
         }
 
-        .inventory-table {
+        table {
             width: 100%;
-            min-width: 690px;
             border-collapse: collapse;
-            font-size: 11px;
+            min-width: 780px;
         }
 
-        .inventory-table th {
-            padding: 14px 17px;
-            text-align: left;
-            background: rgba(12, 20, 41, .24);
-            color: #95A6C4;
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: .8px;
+        th {
+            color: var(--secundario);
+            font-size: 12px;
             text-transform: uppercase;
+            letter-spacing: 0.7px;
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--borde);
             white-space: nowrap;
         }
 
-        .inventory-table td {
-            padding: 15px 17px;
-            border-top: 1px solid var(--borde);
-            color: #D7E1F4;
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #24283b;
+            font-size: 14px;
             vertical-align: middle;
         }
 
-        .inventory-table tbody tr {
-            transition: background .15s ease;
+        tbody tr:hover {
+            background: #1b2033;
         }
 
-        .inventory-table tbody tr:hover {
-            background: rgba(52, 120, 246, .06);
+        .product-image {
+            width: 64px;
+            height: 58px;
+            object-fit: contain;
+            background: #0e1120;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            padding: 4px;
+            display: block;
         }
 
-        .product-code {
-            display: inline-block;
-            padding: 5px 7px;
-            border-radius: 6px;
-            background: rgba(121, 85, 245, .14);
-            color: #BDAFFF;
-            font-size: 9px;
-            overflow-wrap: anywhere;
+        .product-image-placeholder {
+            width: 64px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            background: #20243a;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            color: var(--morado);
+            font-size: 24px;
         }
 
         .product-name {
-            color: #E0E8F9;
-            font-weight: 750;
-            overflow-wrap: anywhere;
+            font-weight: bold;
+            min-width: 140px;
         }
 
-        .product-price {
-            color: #B9ACFF;
-            font-weight: 800;
+        .price {
+            color: var(--verde);
+            font-weight: bold;
             white-space: nowrap;
         }
 
         .stock-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 8px;
-            border-radius: 7px;
-            background: rgba(72, 214, 160, .10);
-            color: #70E5B9;
-            font-size: 9px;
-            font-weight: 750;
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
             white-space: nowrap;
         }
 
-        .stock-badge.low {
-            background: rgba(255, 209, 102, .10);
-            color: #FFE09A;
+        .stock-ok {
+            color: var(--verde);
+            background: #123326;
         }
 
-        .stock-badge.empty {
-            background: rgba(255, 113, 133, .10);
-            color: #FF9AA9;
+        .stock-low {
+            color: var(--amarillo);
+            background: #393117;
         }
 
-        .table-actions {
-            display: flex;
-            align-items: center;
-            gap: 7px;
+        .stock-out {
+            color: var(--rojo);
+            background: #3a1b28;
         }
 
-        .delete-form {
-            display: inline;
-        }
-
-        .empty-state {
-            padding: 38px 20px;
+        .empty {
+            padding: 30px;
+            color: var(--secundario);
             text-align: center;
-            color: var(--texto-secundario);
-            font-size: 12px;
-            line-height: 1.8;
         }
 
-        .empty-icon {
-            margin-bottom: 12px;
-            color: var(--morado-claro);
-            font-size: 29px;
+        .flash {
+            padding: 13px 16px;
+            border-radius: 9px;
+            margin-bottom: 18px;
+            background: #1d2940;
+            border: 1px solid #35476a;
+            color: #dceaff;
         }
 
-        .empty-title {
-            margin-bottom: 5px;
-            color: #DDE6F8;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .hidden-row {
+        .preview-container {
             display: none;
-        }
-
-        /* PIE DE PÁGINA */
-
-        .footer {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 20px 0 5px;
-            color: #7183A3;
-            font-size: 10px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
-        .footer-brand {
-            color: #A995FF;
-            font-weight: 850;
-            letter-spacing: 1.2px;
-        }
-
-        /* MENÚ MÓVIL */
-
-        .overlay {
-            display: none;
-        }
-
-        /* TABLET */
-
-        @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
+        .preview-container img {
+            width: 85px;
+            height: 75px;
+            object-fit: contain;
+            background: #0e1120;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            padding: 4px;
         }
 
         @media (max-width: 950px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                padding: 22px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* TELÉFONOS */
-
-        @media (max-width: 760px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main,
-            .main.expanded {
-                margin-left: 0;
-            }
-
-            .overlay.show {
+        @media (max-width: 650px) {
+            .layout {
                 display: block;
-                position: fixed;
-                inset: 0;
-                z-index: 900;
-                background: rgba(2, 6, 20, .65);
             }
 
-            .topbar {
-                padding: 13px 16px;
+            .sidebar {
+                width: 100%;
+                border-right: 0;
+                border-bottom: 1px solid var(--borde);
             }
 
-            .content {
-                padding: 22px 15px;
+            .brand-subtitle {
+                margin-bottom: 20px;
             }
 
-            .panel-body {
+            .main {
                 padding: 17px;
-            }
-
-            .table-tools {
-                padding: 15px;
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .form-group.full {
+            .field-full {
                 grid-column: auto;
             }
-        }
 
-        @media (max-width: 460px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 9px;
+            .panel {
+                padding: 16px;
             }
 
-            .stat-card {
-                padding: 13px;
-                border-radius: 13px;
-            }
-
-            .stat-label {
-                font-size: 10px;
-            }
-
-            .stat-icon {
-                width: 31px;
-                height: 31px;
-                font-size: 15px;
-            }
-
-            .stat-value {
-                margin-top: 15px;
-                font-size: 22px;
-            }
-
-            .stat-description {
-                font-size: 9px;
-                line-height: 1.5;
-            }
-
-            .topbar-user {
-                gap: 7px;
-            }
-
-            .user-name {
-                max-width: 100px;
-                overflow-wrap: anywhere;
-            }
-
-            .user-role {
-                max-width: 100px;
-                overflow-wrap: anywhere;
-            }
-
-            .panel-header {
-                padding: 15px;
-            }
-
-            .breadcrumb {
-                font-size: 10px;
-            }
-
-            .date-chip {
-                font-size: 10px;
-            }
-
-            .form-actions .btn {
-                width: 100%;
-            }
-
-            .search-box {
-                max-width: none;
-                width: 100%;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                transition: none !important;
+            .topbar h1 {
+                font-size: 24px;
             }
         }
     </style>
 </head>
 
 <body>
-<div class="app">
+<div class="layout">
 
-    <!-- MENÚ LATERAL -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
+        <div class="brand">NEXORA<span>.</span></div>
+        <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
 
-        <a href="{{ url_for('dashboard') }}" class="brand">
-            <div class="brand-logo">N</div>
-            <div>
-                <div class="brand-name">NEXORA</div>
-                <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
-            </div>
-        </a>
-
-        <div class="nav-label">MENÚ PRINCIPAL</div>
-
-        <nav class="nav-menu">
-            <a href="{{ url_for('dashboard') }}" class="nav-link">
-                <span class="nav-icon">⌂</span>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="{{ url_for('ver_inventario') }}" class="nav-link active">
-                <span class="nav-icon">▦</span>
-                <span>Inventario</span>
-            </a>
-
-            <a href="{{ url_for('ver_ventas') }}" class="nav-link">
-                <span class="nav-icon">↗</span>
-                <span>Ventas</span>
-            </a>
-
-            <a href="{{ url_for('ver_estadisticas') }}" class="nav-link">
-                <span class="nav-icon">◫</span>
-                <span>Estadísticas</span>
-            </a>
-        </nav>
-
-        <div class="nav-label">CUENTA</div>
-
-        <nav class="nav-menu">
-            <a href="{{ url_for('cerrar_sesion') }}" class="nav-link">
-                <span class="nav-icon">⇥</span>
-                <span>Cerrar sesión</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-bottom">
-            <div class="system-card">
-                <div class="system-card-title">
-                    <span class="system-indicator"></span>
-                    Sistema de gestión
-                </div>
-                <div class="system-card-description">
-                    NEXORA Gaming & Technology<br>
-                    Panel de administración
-                </div>
-            </div>
+        <div class="user-card">
+            <strong>{{ usuario }}</strong>
+            <small>{{ rol }}</small>
         </div>
+
+        <nav class="menu">
+            <div class="menu-title">Principal</div>
+            <a href="{{ url_for('dashboard') }}">⌂ &nbsp; Dashboard</a>
+            <a href="{{ url_for('ver_inventario') }}" class="active">▦ &nbsp; Inventario</a>
+            <a href="{{ url_for('ver_ventas') }}">▤ &nbsp; Ventas</a>
+            <a href="{{ url_for('estadisticas') }}">▥ &nbsp; Estadísticas</a>
+
+            <div class="menu-title">Cuenta</div>
+            <a href="{{ url_for('logout') }}">↪ &nbsp; Cerrar sesión</a>
+        </nav>
     </aside>
 
-    <div class="overlay" id="overlay"></div>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="main" id="main">
+    <main class="main">
 
         <header class="topbar">
-            <div class="topbar-left">
-                <button
-                    type="button"
-                    class="menu-toggle"
-                    id="menuToggle"
-                    aria-label="Ocultar menú"
-                    aria-expanded="true"
-                    aria-controls="sidebar">
-                    ☰
-                </button>
-
-                <div class="breadcrumb">
-                    Inicio / <strong>Inventario</strong>
-                </div>
+            <div>
+                <h1>Inventario de productos</h1>
+                <p>Administra los productos y controla las existencias.</p>
             </div>
 
-            <div class="topbar-user">
-                <div class="avatar">
-                    {{ usuario[0]|upper if usuario else 'N' }}
-                </div>
-                <div>
-                    <div class="user-name">{{ usuario }}</div>
-                    <div class="user-role">{{ rol }}</div>
-                </div>
-            </div>
+            <a class="logout" href="{{ url_for('logout') }}">Cerrar sesión ↗</a>
         </header>
 
-        <div class="content">
-
-            <!-- ENCABEZADO -->
-            <section class="welcome">
-                <div>
-                    <div class="eyebrow">NEXORA / CONTROL DE PRODUCTOS</div>
-                    <h1 class="page-title">Inventario</h1>
-                    <p class="welcome-description">
-                        Consultá, registrá y administrá los productos de tu tienda tecnológica.
-                    </p>
-                </div>
-
-                <div class="date-chip">
-                    ◆ Gestión de inventario
-                </div>
-            </section>
-
-            <!-- MENSAJES DE FLASK -->
-            {% with mensajes = get_flashed_messages(with_categories=true) %}
-                {% if mensajes %}
-                    <div class="flash-list">
-                        {% for categoria, mensaje in mensajes %}
-                            <div class="flash {{ categoria }}">
-                                {{ mensaje }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <!-- RESUMEN -->
-            {% set unidades_totales = productos | sum(attribute='stock') %}
-            {% set valor_total = namespace(total=0) %}
-            {% for producto in productos %}
-                {% set valor_total.total = valor_total.total + (producto.precio|float * producto.stock|int) %}
-            {% endfor %}
-
-            <div class="section-heading">
-                <h2 class="section-title">Resumen del inventario</h2>
-                <span class="section-note">Indicadores de existencias</span>
-            </div>
-
-            <section class="stats-grid">
-
-                <article class="stat-card">
-                    <div class="stat-top">
-                        <span class="stat-label">Productos registrados</span>
-                        <span class="stat-icon icon-blue">▦</span>
-                    </div>
-                    <div class="stat-value">{{ productos|length }}</div>
-                    <div class="stat-description">Productos en el catálogo</div>
-                </article>
-
-                <article class="stat-card">
-                    <div class="stat-top">
-                        <span class="stat-label">Unidades disponibles</span>
-                        <span class="stat-icon icon-purple">▤</span>
-                    </div>
-                    <div class="stat-value">{{ unidades_totales }}</div>
-                    <div class="stat-description">Unidades registradas en stock</div>
-                </article>
-
-                <article class="stat-card">
-                    <div class="stat-top">
-                        <span class="stat-label">Valor del inventario</span>
-                        <span class="stat-icon icon-green">Q</span>
-                    </div>
-                    <div class="stat-value">
-                        Q {{ "%.2f"|format(valor_total.total) }}
-                    </div>
-                    <div class="stat-description">Precio de venta por existencias</div>
-                </article>
-
-            </section>
-
-            <!-- AGREGAR PRODUCTO -->
-            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
-
-            <div class="section-heading">
-                <h2 class="section-title">Administración de productos</h2>
-                <span class="section-note">Registro de artículos</span>
-            </div>
-
-            <section class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">Agregar producto</h2>
-                        <p class="panel-description">
-                            Completá los datos para registrar un producto nuevo.
-                        </p>
-                    </div>
-                    <span class="panel-tag">NUEVO PRODUCTO</span>
-                </div>
-
-                <div class="panel-body">
-                    <form
-                        action="{{ url_for('ver_inventario') }}"
-                        method="POST"
-                        id="productForm">
-
-                        <div class="form-grid">
-
-                            <div class="form-group">
-                                <label class="form-label" for="codigo">
-                                    Código del producto
-                                </label>
-                                <input
-                                    class="form-input"
-                                    type="text"
-                                    id="codigo"
-                                    name="codigo"
-                                    placeholder="Ej. GPU-001"
-                                    maxlength="50"
-                                    required>
-                                <span class="form-help">
-                                    Utilizá un código único para identificarlo.
-                                </span>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="nombre">
-                                    Nombre del producto
-                                </label>
-                                <input
-                                    class="form-input"
-                                    type="text"
-                                    id="nombre"
-                                    name="nombre"
-                                    placeholder="Ej. Tarjeta gráfica RTX 4060"
-                                    maxlength="150"
-                                    required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="precio">
-                                    Precio de venta (Q)
-                                </label>
-                                <input
-                                    class="form-input"
-                                    type="number"
-                                    id="precio"
-                                    name="precio"
-                                    placeholder="0.00"
-                                    min="0.01"
-                                    step="0.01"
-                                    required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="stock">
-                                    Cantidad disponible
-                                </label>
-                                <input
-                                    class="form-input"
-                                    type="number"
-                                    id="stock"
-                                    name="stock"
-                                    placeholder="0"
-                                    min="0"
-                                    step="1"
-                                    required>
-                            </div>
-
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                ＋ Registrar producto
-                            </button>
-
-                            <button type="reset" class="btn btn-secondary">
-                                Limpiar formulario
-                            </button>
-                        </div>
-
-                    </form>
-                </div>
-            </section>
-
+        {% with mensajes = get_flashed_messages() %}
+            {% if mensajes %}
+                {% for mensaje in mensajes %}
+                    <div class="flash">{{ mensaje }}</div>
+                {% endfor %}
             {% endif %}
+        {% endwith %}
 
-            <!-- TABLA DE PRODUCTOS -->
-            <div class="section-heading">
-                <h2 class="section-title">Productos registrados</h2>
-                <span class="section-note">Consulta y control de existencias</span>
+        {% set total_productos = productos|length %}
+        {% set unidades = namespace(total=0, bajos=0) %}
+
+        {% for producto in productos %}
+            {% set unidades.total = unidades.total + (producto.stock|int) %}
+            {% if producto.stock|int < 5 %}
+                {% set unidades.bajos = unidades.bajos + 1 %}
+            {% endif %}
+        {% endfor %}
+
+        <section class="stats">
+            <div class="stat-card">
+                <p>Productos registrados</p>
+                <h2>{{ total_productos }}</h2>
             </div>
 
-            <section class="panel">
+            <div class="stat-card">
+                <p>Unidades en existencia</p>
+                <h2>{{ unidades.total }}</h2>
+            </div>
 
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">Catálogo de inventario</h2>
-                        <p class="panel-description">
-                            Revisá los precios y las cantidades disponibles.
-                        </p>
-                    </div>
-                    <span class="panel-tag">INVENTARIO</span>
-                </div>
+            <div class="stat-card">
+                <p>Productos con stock bajo</p>
+                <h2>{{ unidades.bajos }}</h2>
+            </div>
+        </section>
 
-                <div class="table-tools">
-                    <div class="search-box">
-                        <span class="search-icon">⌕</span>
+        {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Agregar producto</h2>
+                <span class="muted">Completa los datos del producto</span>
+            </div>
+
+            <form
+                action="{{ url_for('ver_inventario') }}"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="codigo">Código del producto</label>
                         <input
-                            type="search"
-                            id="buscarProducto"
-                            class="search-input"
-                            placeholder="Buscar por código o nombre..."
-                            aria-label="Buscar productos">
+                            type="text"
+                            id="codigo"
+                            name="codigo"
+                            placeholder="Ej. NX101"
+                            required
+                        >
                     </div>
 
-                    <span class="result-count" id="resultCount">
-                        {{ productos|length }} producto(s)
-                    </span>
-                </div>
-
-                {% if productos %}
-
-                <div class="table-wrap">
-                    <table class="inventory-table" id="inventoryTable">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Producto</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Estado</th>
-                                {% if rol in ['Administrador', 'Encargado de Inventario'] %}
-                                    <th>Acciones</th>
-                                {% endif %}
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {% for producto in productos %}
-                            <tr class="product-row">
-                                <td>
-                                    <span class="product-code">
-                                        {{ producto.codigo }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="product-name">
-                                        {{ producto.nombre }}
-                                    </span>
-                                </td>
-
-                                <td class="product-price">
-                                    Q {{ "%.2f"|format(producto.precio|float) }}
-                                </td>
-
-                                <td>{{ producto.stock }}</td>
-
-                                <td>
-                                    {% if producto.stock|int == 0 %}
-                                        <span class="stock-badge empty">
-                                            Sin existencias
-                                        </span>
-                                    {% elif producto.stock|int <= 5 %}
-                                        <span class="stock-badge low">
-                                            Stock bajo
-                                        </span>
-                                    {% else %}
-                                        <span class="stock-badge">
-                                            Disponible
-                                        </span>
-                                    {% endif %}
-                                </td>
-
-                                {% if rol in ['Administrador', 'Encargado de Inventario'] %}
-                                <td>
-                                    <div class="table-actions">
-                                        <form
-                                            class="delete-form"
-                                            action="{{ url_for('eliminar', codigo=producto.codigo) }}"
-                                            method="POST"
-                                            onsubmit="return confirmarEliminacion('{{ producto.nombre|e }}');">
-
-                                            <button
-                                                type="submit"
-                                                class="btn btn-danger btn-small">
-                                                Eliminar
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                                {% endif %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="empty-state" id="noSearchResults" hidden>
-                    <div class="empty-icon">⌕</div>
-                    <div class="empty-title">No se encontraron resultados</div>
-                    <div>
-                        Probá con otro código o nombre de producto.
+                    <div class="field">
+                        <label for="nombre">Nombre del producto</label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Ej. Teclado mecánico RGB"
+                            required
+                        >
                     </div>
-                </div>
 
-                {% else %}
-
-                <div class="empty-state">
-                    <div class="empty-icon">▦</div>
-                    <div class="empty-title">Todavía no hay productos</div>
-                    <div>
-                        Los productos que registrés aparecerán en esta sección.
+                    <div class="field">
+                        <label for="precio">Precio de venta (Q)</label>
+                        <input
+                            type="number"
+                            id="precio"
+                            name="precio"
+                            placeholder="0.00"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
                     </div>
+
+                    <div class="field">
+                        <label for="stock">Cantidad en existencia</label>
+                        <input
+                            type="number"
+                            id="stock"
+                            name="stock"
+                            placeholder="Ej. 10"
+                            min="0"
+                            step="1"
+                            required
+                        >
+                    </div>
+
+                    <div class="field field-full">
+                        <label for="imagen">Fotografía del producto (opcional)</label>
+                        <input
+                            type="file"
+                            id="imagen"
+                            name="imagen"
+                            accept="image/*"
+                        >
+
+                        <div class="muted">
+                            Puedes seleccionar una imagen JPG, PNG o WEBP desde tu computadora.
+                        </div>
+
+                        <div class="preview-container" id="previewContainer">
+                            <img id="previewImagen" src="" alt="Vista previa del producto">
+                            <span class="muted">Vista previa de la imagen seleccionada</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                {% endif %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        + Registrar producto
+                    </button>
+                </div>
+            </form>
+        </section>
+        {% endif %}
 
-            </section>
-
-            <!-- PIE DE PÁGINA -->
-            <footer class="footer">
+        <section class="panel">
+            <div class="panel-heading">
                 <div>
-                    <span class="footer-brand">NEXORA</span>
-                    GAMING & TECHNOLOGY
+                    <h2>Productos registrados</h2>
+                    <span class="muted">Consulta los precios y las existencias.</span>
                 </div>
-                <div>Panel de gestión del negocio</div>
-            </footer>
 
-        </div>
+                <input
+                    type="search"
+                    id="buscador"
+                    class="search"
+                    placeholder="Buscar por código o nombre..."
+                    aria-label="Buscar productos"
+                >
+            </div>
+
+            <div class="table-wrap">
+                <table id="tablaProductos">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+                                <th>Acciones</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>
+                                {% if producto.imagen %}
+                                    <img
+                                        class="product-image"
+                                        src="{{ producto.imagen }}"
+                                        alt="{{ producto.nombre }}"
+                                        loading="lazy"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+                                    >
+                                    <div class="product-image-placeholder" style="display:none;">
+                                        ▦
+                                    </div>
+                                {% else %}
+                                    <div class="product-image-placeholder">▦</div>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ producto.codigo }}</td>
+
+                            <td class="product-name">{{ producto.nombre }}</td>
+
+                            <td class="price">
+                                Q {{ "%.2f"|format(producto.precio|float) }}
+                            </td>
+
+                            <td>{{ producto.stock }}</td>
+
+                            <td>
+                                {% if producto.stock|int <= 0 %}
+                                    <span class="stock-badge stock-out">Agotado</span>
+                                {% elif producto.stock|int < 5 %}
+                                    <span class="stock-badge stock-low">Stock bajo</span>
+                                {% else %}
+                                    <span class="stock-badge stock-ok">Disponible</span>
+                                {% endif %}
+                            </td>
+
+                            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+                            <td>
+                                <form
+                                    action="{{ url_for('eliminar_producto', codigo=producto.codigo) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');"
+                                >
+                                    <button type="submit" class="btn btn-delete">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td
+                                colspan="{% if rol in ['Administrador', 'Encargado de Inventario'] %}7{% else %}6{% endif %}"
+                                class="empty"
+                            >
+                                Todavía no hay productos registrados en el inventario.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="muted" id="sinResultados" style="display:none; margin-top:20px;">
+                No se encontraron productos con esa búsqueda.
+            </p>
+        </section>
+
     </main>
 </div>
 
 <script>
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("overlay");
-    const menuToggle = document.getElementById("menuToggle");
-    const main = document.getElementById("main");
+    const buscador = document.getElementById("buscador");
+    const filas = document.querySelectorAll("#tablaProductos tbody tr");
+    const sinResultados = document.getElementById("sinResultados");
 
-    function actualizarEstadoBoton() {
-        const esMovil = window.innerWidth <= 760;
-        const estaAbierto = sidebar.classList.contains("open");
-        const estaOculto = sidebar.classList.contains("hidden");
+    buscador.addEventListener("input", function () {
+        const busqueda = this.value.toLowerCase().trim();
+        let encontrados = 0;
 
-        if (esMovil) {
-            menuToggle.setAttribute("aria-expanded", estaAbierto);
-            menuToggle.setAttribute(
-                "aria-label",
-                estaAbierto ? "Cerrar menú" : "Abrir menú"
-            );
-        } else {
-            menuToggle.setAttribute("aria-expanded", !estaOculto);
-            menuToggle.setAttribute(
-                "aria-label",
-                estaOculto ? "Mostrar menú" : "Ocultar menú"
-            );
-        }
-    }
+        filas.forEach(function (fila) {
+            const texto = fila.textContent.toLowerCase();
 
-    function abrirMenuMovil() {
-        sidebar.classList.remove("hidden");
-        sidebar.classList.add("open");
-        overlay.classList.add("show");
-        actualizarEstadoBoton();
-    }
-
-    function cerrarMenuMovil() {
-        sidebar.classList.remove("open");
-        overlay.classList.remove("show");
-        actualizarEstadoBoton();
-    }
-
-    menuToggle.addEventListener("click", function () {
-        if (window.innerWidth <= 760) {
-            if (sidebar.classList.contains("open")) {
-                cerrarMenuMovil();
-            } else {
-                abrirMenuMovil();
-            }
-        } else {
-            sidebar.classList.toggle("hidden");
-
-            const oculto = sidebar.classList.contains("hidden");
-            main.classList.toggle("expanded", oculto);
-
-            actualizarEstadoBoton();
-        }
-    });
-
-    overlay.addEventListener("click", cerrarMenuMovil);
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            cerrarMenuMovil();
-        }
-    });
-
-    window.addEventListener("resize", function () {
-        if (window.innerWidth > 760) {
-            sidebar.classList.remove("open");
-            overlay.classList.remove("show");
-
-            const oculto = sidebar.classList.contains("hidden");
-            main.classList.toggle("expanded", oculto);
-        } else {
-            sidebar.classList.remove("hidden");
-            main.classList.remove("expanded");
-        }
-
-        actualizarEstadoBoton();
-    });
-
-    // BÚSQUEDA DE PRODUCTOS
-    const buscarProducto = document.getElementById("buscarProducto");
-    const filasProductos = document.querySelectorAll(".product-row");
-    const resultCount = document.getElementById("resultCount");
-    const noSearchResults = document.getElementById("noSearchResults");
-
-    if (buscarProducto) {
-        buscarProducto.addEventListener("input", function () {
-            const busqueda = this.value.trim().toLowerCase();
-            let visibles = 0;
-
-            filasProductos.forEach(function (fila) {
-                const contenido = fila.textContent.toLowerCase();
-                const coincide = contenido.includes(busqueda);
-
-                fila.classList.toggle("hidden-row", !coincide);
-
-                if (coincide) {
-                    visibles++;
+            if (texto.includes(busqueda)) {
+                fila.style.display = "";
+                if (fila.querySelector(".product-name")) {
+                    encontrados++;
                 }
-            });
-
-            if (resultCount) {
-                resultCount.textContent =
-                    visibles + (visibles === 1 ? " producto" : " productos");
-            }
-
-            if (noSearchResults) {
-                noSearchResults.hidden =
-                    visibles !== 0 || filasProductos.length === 0;
+            } else {
+                fila.style.display = "none";
             }
         });
-    }
 
-    // CONFIRMACIÓN ANTES DE ELIMINAR
-    function confirmarEliminacion(nombre) {
-        return confirm(
-            '¿Estás seguro de que deseás eliminar "' +
-            nombre +
-            '" del inventario?'
-        );
-    }
+        sinResultados.style.display =
+            encontrados === 0 && busqueda !== "" ? "block" : "none";
+    });
 
-    // VALIDACIÓN BÁSICA DEL FORMULARIO
-    const productForm = document.getElementById("productForm");
+    const campoImagen = document.getElementById("imagen");
+    const previewContainer = document.getElementById("previewContainer");
+    const previewImagen = document.getElementById("previewImagen");
 
-    if (productForm) {
-        productForm.addEventListener("submit", function (event) {
-            const precio = parseFloat(
-                document.getElementById("precio").value
-            );
+    if (campoImagen) {
+        campoImagen.addEventListener("change", function () {
+            const archivo = this.files[0];
 
-            const stock = Number(
-                document.getElementById("stock").value
-            );
-
-            if (!Number.isFinite(precio) || precio <= 0) {
-                event.preventDefault();
-                alert("Ingresá un precio mayor que cero.");
+            if (!archivo) {
+                previewContainer.style.display = "none";
+                previewImagen.removeAttribute("src");
                 return;
             }
 
-            if (!Number.isInteger(stock) || stock < 0) {
-                event.preventDefault();
-                alert("El stock debe ser un número entero igual o mayor que cero.");
+            if (!archivo.type.startsWith("image/")) {
+                alert("Selecciona un archivo de imagen válido.");
+                this.value = "";
+                previewContainer.style.display = "none";
+                return;
             }
+
+            previewImagen.src = URL.createObjectURL(archivo);
+            previewContainer.style.display = "flex";
         });
     }
-
-    actualizarEstadoBoton();
 </script>
 
 </body>
