@@ -1,6 +1,7 @@
 
 import os
 import uuid
+from datetime import timedelta
 
 from flask import (
     Flask,
@@ -11,7 +12,6 @@ from flask import (
     session,
     flash
 )
-
 from werkzeug.utils import secure_filename
 
 import inventario
@@ -19,8 +19,14 @@ from usuario import USUARIOS
 from ventas import realizar_venta, obtener_estadisticas
 
 
+# ==========================================
+# CONFIGURACIÓN DE LA APLICACIÓN
+# ==========================================
+
 app = Flask(__name__)
 
+# En producción, SECRET_KEY debe configurarse como
+# variable de entorno en el servicio de alojamiento.
 app.secret_key = os.environ.get("SECRET_KEY")
 
 if not app.secret_key:
@@ -29,7 +35,18 @@ if not app.secret_key:
             "Debes configurar la variable SECRET_KEY en Render."
         )
 
+    # Solo para desarrollo local.
     app.secret_key = "clave-local-solo-para-pruebas"
+
+EN_PRODUCCION = bool(os.environ.get("RENDER"))
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=EN_PRODUCCION,
+    SESSION_COOKIE_SAMESITE="Lax",
+    MAX_CONTENT_LENGTH=5 * 1024 * 1024,
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=8)
+)
 
 
 # ==========================================
@@ -54,6 +71,7 @@ EXTENSIONES_IMAGEN = {
 
 
 def guardar_imagen(archivo):
+    """Guarda una imagen y devuelve su ruta pública."""
 
     if not archivo or not archivo.filename:
         return ""
@@ -85,16 +103,57 @@ def guardar_imagen(archivo):
     )
 
 
+def eliminar_archivo_subido(ruta_publica):
+    """Elimina una imagen subida si el registro del producto falla."""
+
+    if not ruta_publica:
+        return
+
+    nombre_archivo = os.path.basename(ruta_publica)
+
+    if not nombre_archivo:
+        return
+
+    ruta_archivo = os.path.join(
+        UPLOAD_FOLDER,
+        nombre_archivo
+    )
+
+    try:
+        if os.path.isfile(ruta_archivo):
+            os.remove(ruta_archivo)
+    except OSError:
+        app.logger.exception(
+            "No se pudo eliminar la imagen: %s",
+            nombre_archivo
+        )
+
+
 # ==========================================
 # CONTROL DE SESIÓN Y PERMISOS
 # ==========================================
 
 def requiere_sesion():
-    return "usuario" in session
+    return bool(session.get("usuario"))
 
 
 def requiere_rol(*roles):
     return session.get("rol") in roles
+
+
+def usuario_actual():
+    return session.get("usuario")
+
+
+def rol_actual():
+    return session.get("rol")
+
+
+def cargar_productos_seguro():
+    """Carga los productos antes de consultar el inventario."""
+
+    inventario.cargar_productos()
+    return inventario.listar_productos()
 
 
 # ==========================================
@@ -119,8 +178,13 @@ def login():
 
         usuario = USUARIOS.get(nombre_usuario)
 
-        if usuario and usuario.get("contrasena") == contrasena:
+        if (
+            usuario
+            and usuario.get("contrasena") == contrasena
+            and usuario.get("rol")
+        ):
             session.clear()
+            session.permanent = True
             session["usuario"] = nombre_usuario
             session["rol"] = usuario["rol"]
 
@@ -142,13 +206,13 @@ def dashboard():
         return redirect(url_for("login"))
 
     try:
-        inventario.cargar_productos()
-        productos = inventario.listar_productos()
+        productos = cargar_productos_seguro()
 
         total_productos = len(productos)
 
         unidades = sum(
-            int(producto["stock"]) for producto in productos
+            int(producto["stock"])
+            for producto in productos
         )
 
         valor_inventario = sum(
@@ -156,18 +220,22 @@ def dashboard():
             for producto in productos
         )
 
-    except (OSError, ValueError, KeyError, TypeError) as error:
-        flash("No se pudo cargar el inventario: " + str(error))
+        estadisticas = obtener_estadisticas()
+
+    except (OSError, ValueError, KeyError, TypeError):
+        app.logger.exception("Error al cargar el dashboard.")
+
+        flash("No se pudieron cargar los datos del panel.")
+
         total_productos = 0
         unidades = 0
         valor_inventario = 0
-
-    estadisticas = obtener_estadisticas()
+        estadisticas = {}
 
     return render_template(
         "dashboard.html",
-        usuario=session["usuario"],
-        rol=session["rol"],
+        usuario=usuario_actual(),
+        rol=rol_actual(),
         total_productos=total_productos,
         unidades=unidades,
         valor_inventario=valor_inventario,
@@ -199,7 +267,7 @@ def ver_inventario():
 
             codigo = request.form.get(
                 "codigo", ""
-            ).strip()
+            ).strip().upper()
 
             nombre = request.form.get(
                 "nombre", ""
@@ -214,8 +282,19 @@ def ver_inventario():
             ).strip()
 
             archivo = request.files.get("imagen")
+            imagen = ""
 
             try:
+                if not codigo or not nombre:
+                    raise ValueError(
+                        "El código y el nombre son obligatorios."
+                    )
+
+                if not precio or not stock:
+                    raise ValueError(
+                        "El precio y el stock son obligatorios."
+                    )
+
                 imagen = guardar_imagen(archivo)
 
                 inventario.agregar_producto(
@@ -229,7 +308,22 @@ def ver_inventario():
                 flash("Producto agregado correctamente.")
 
             except (ValueError, OSError) as error:
+                # Evita dejar imágenes huérfanas si el producto
+                # no pudo guardarse.
+                eliminar_archivo_subido(imagen)
                 flash(str(error))
+
+            except Exception:
+                eliminar_archivo_subido(imagen)
+
+                app.logger.exception(
+                    "Error inesperado al agregar un producto."
+                )
+
+                flash(
+                    "No se pudo agregar el producto. "
+                    "Revisa los datos e inténtalo de nuevo."
+                )
 
             return redirect(url_for("ver_inventario"))
 
@@ -238,18 +332,20 @@ def ver_inventario():
         return render_template(
             "inventario.html",
             productos=productos,
-            usuario=session["usuario"],
-            rol=session["rol"]
+            usuario=usuario_actual(),
+            rol=rol_actual()
         )
 
-    except (OSError, ValueError, KeyError, TypeError) as error:
-        flash("Error al cargar el inventario: " + str(error))
+    except (OSError, ValueError, KeyError, TypeError):
+        app.logger.exception("Error al cargar el inventario.")
+
+        flash("No se pudo cargar el inventario.")
 
         return render_template(
             "inventario.html",
             productos=[],
-            usuario=session["usuario"],
-            rol=session["rol"]
+            usuario=usuario_actual(),
+            rol=rol_actual()
         )
 
 
@@ -276,8 +372,16 @@ def eliminar(codigo):
 
         flash("Producto eliminado correctamente.")
 
-    except (ValueError, OSError, KeyError) as error:
-        flash("No se pudo eliminar el producto: " + str(error))
+    except (ValueError, OSError, KeyError, TypeError):
+        app.logger.exception(
+            "Error al eliminar el producto %s.",
+            codigo
+        )
+
+        flash(
+            "No se pudo eliminar el producto. "
+            "Comprueba que exista e inténtalo de nuevo."
+        )
 
     return redirect(url_for("ver_inventario"))
 
@@ -301,26 +405,42 @@ def ver_ventas():
                 "codigo", ""
             ).strip().upper()
 
+            cantidad_texto = request.form.get(
+                "cantidad", ""
+            ).strip()
+
             try:
-                cantidad = int(
-                    request.form.get("cantidad", "")
-                )
+                cantidad = int(cantidad_texto)
+
+                if cantidad <= 0:
+                    raise ValueError
+
             except (ValueError, TypeError):
-                flash("Ingresa una cantidad válida.")
+                flash("Ingresa una cantidad entera mayor que cero.")
                 return redirect(url_for("ver_ventas"))
 
-            venta = realizar_venta(
-                codigo=codigo,
-                cantidad=cantidad,
-                usuario=session.get("usuario", "Sistema")
-            )
+            try:
+                venta = realizar_venta(
+                    codigo=codigo,
+                    cantidad=cantidad,
+                    usuario=usuario_actual() or "Sistema"
+                )
 
-            if venta:
-                flash("Venta registrada correctamente.")
-            else:
+                if venta:
+                    flash("Venta registrada correctamente.")
+                else:
+                    flash(
+                        "No se pudo registrar la venta. "
+                        "Verifica el producto y el stock."
+                    )
+
+            except (ValueError, OSError, KeyError, TypeError):
+                app.logger.exception(
+                    "Error al registrar una venta."
+                )
+
                 flash(
-                    "No se pudo registrar la venta. "
-                    "Verifica el producto y el stock."
+                    "Ocurrió un error al registrar la venta."
                 )
 
             return redirect(url_for("ver_ventas"))
@@ -330,19 +450,21 @@ def ver_ventas():
         return render_template(
             "ventas.html",
             productos=productos,
-            usuario=session.get("usuario"),
-            rol=session.get("rol"),
+            usuario=usuario_actual(),
+            rol=rol_actual(),
             mensaje=None
         )
 
-    except (OSError, ValueError, KeyError, TypeError) as error:
-        flash("Error al procesar la venta: " + str(error))
+    except (OSError, ValueError, KeyError, TypeError):
+        app.logger.exception("Error al cargar la página de ventas.")
+
+        flash("No se pudieron cargar los datos de ventas.")
 
         return render_template(
             "ventas.html",
             productos=[],
-            usuario=session.get("usuario"),
-            rol=session.get("rol"),
+            usuario=usuario_actual(),
+            rol=rol_actual(),
             mensaje=None
         )
 
@@ -357,13 +479,20 @@ def ver_estadisticas():
     if not requiere_sesion():
         return redirect(url_for("login"))
 
-    estadisticas = obtener_estadisticas()
+    try:
+        estadisticas = obtener_estadisticas()
+
+    except (OSError, ValueError, KeyError, TypeError):
+        app.logger.exception("Error al obtener estadísticas.")
+
+        flash("No se pudieron cargar las estadísticas.")
+        estadisticas = {}
 
     return render_template(
         "estadisticas.html",
         estadisticas=estadisticas,
-        usuario=session.get("usuario"),
-        rol=session.get("rol")
+        usuario=usuario_actual(),
+        rol=rol_actual()
     )
 
 
@@ -390,6 +519,33 @@ def pagina_no_encontrada(error):
         return "La página solicitada no existe.", 404
 
     return redirect(url_for("login"))
+
+
+@app.errorhandler(413)
+def archivo_demasiado_grande(error):
+
+    flash(
+        "El archivo supera el límite permitido de 5 MB."
+    )
+
+    if requiere_sesion():
+        return redirect(url_for("ver_inventario"))
+
+    return redirect(url_for("login"))
+
+
+# ==========================================
+# ENCABEZADOS DE SEGURIDAD
+# ==========================================
+
+@app.after_request
+def agregar_encabezados_seguridad(respuesta):
+
+    respuesta.headers["X-Content-Type-Options"] = "nosniff"
+    respuesta.headers["X-Frame-Options"] = "SAMEORIGIN"
+    respuesta.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    return respuesta
 
 
 # ==========================================
