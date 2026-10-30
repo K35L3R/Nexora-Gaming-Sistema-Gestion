@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,298 +7,664 @@
 
     <style>
         :root {
-            --fondo: #0b0d17;
-            --panel: #151827;
-            --panel2: #1b2033;
-            --borde: #2b3047;
-            --texto: #f2f3fa;
-            --secundario: #a6acc4;
-            --morado: #9b7bff;
-            --azul: #56c8ff;
-            --verde: #4ade80;
-            --rojo: #fb7185;
-            --amarillo: #facc15;
+            --fondo: #10172E;
+            --fondo-secundario: #151E39;
+            --panel: #1D2947;
+            --panel-hover: #263555;
+            --borde: #2C3959;
+            --morado: #7955F5;
+            --morado-claro: #A995FF;
+            --azul: #3478F6;
+            --azul-claro: #75A6FF;
+            --texto: #E5EBFA;
+            --texto-secundario: #9AAACA;
+            --verde: #48D6A0;
+            --rojo: #FF718B;
+            --amarillo: #FFD166;
+            --sidebar-width: 250px;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--fondo);
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at 80% 0%, rgba(52,120,246,.08), transparent 28rem),
+                var(--fondo);
             color: var(--texto);
         }
 
-        .layout {
-            display: flex;
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            color: inherit;
+        }
+
+        .app {
             min-height: 100vh;
         }
 
         .sidebar {
-            width: 245px;
-            flex-shrink: 0;
-            background: #101321;
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 1000;
+            width: var(--sidebar-width);
+            padding: 25px 17px;
+            background: #121B35;
             border-right: 1px solid var(--borde);
-            padding: 25px 16px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform .25s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
         }
 
         .brand {
-            font-size: 23px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            margin: 0 0 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 9px 25px;
+            border-bottom: 1px solid var(--borde);
         }
 
-        .brand span {
-            color: var(--morado);
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: #fff;
+            font-size: 22px;
+            font-weight: 900;
+            box-shadow: 0 5px 20px rgba(94,82,245,.23);
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
         }
 
         .brand-subtitle {
-            color: var(--secundario);
-            font-size: 11px;
+            margin-top: 4px;
+            color: var(--texto-secundario);
+            font-size: 9px;
+            letter-spacing: 1.1px;
+        }
+
+        .nav-label {
+            margin: 26px 10px 11px;
+            color: #7383A8;
+            font-size: 10px;
+            font-weight: 800;
             letter-spacing: 1.5px;
-            margin-bottom: 35px;
         }
 
-        .user-card {
-            background: var(--panel);
-            border: 1px solid var(--borde);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 25px;
+        .nav-menu {
+            display: grid;
+            gap: 7px;
         }
 
-        .user-card strong {
-            display: block;
-            margin-bottom: 7px;
-            overflow-wrap: anywhere;
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 13px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            color: var(--texto-secundario);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
         }
 
-        .user-card small {
-            color: var(--secundario);
-        }
-
-        .menu-title {
-            color: var(--secundario);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 22px 10px 10px;
-        }
-
-        .menu a {
-            display: block;
-            text-decoration: none;
-            color: var(--secundario);
-            padding: 12px 14px;
-            border-radius: 9px;
-            margin: 5px 0;
-            transition: 0.2s;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            background: #25203e;
+        .nav-link:hover {
             color: var(--texto);
+            background: rgba(121,85,245,.10);
+            border-color: rgba(169,149,255,.13);
+            transform: translateX(2px);
         }
 
-        .menu a.active {
-            border-left: 3px solid var(--morado);
+        .nav-link.active {
+            color: #fff;
+            background: linear-gradient(100deg, rgba(121,85,245,.25), rgba(52,120,246,.12));
+            border-color: rgba(169,149,255,.2);
+            box-shadow: inset 3px 0 var(--morado-claro);
+        }
+
+        .nav-icon {
+            width: 21px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .system-card {
+            padding: 14px;
+            border: 1px solid var(--borde);
+            border-radius: 13px;
+            background: rgba(29,41,71,.65);
+        }
+
+        .system-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .system-indicator {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--verde);
+            box-shadow: 0 0 10px rgba(72,214,160,.55);
+        }
+
+        .system-card-description {
+            margin-top: 8px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            display: none;
+            background: rgba(3,7,18,.65);
+            backdrop-filter: blur(3px);
+        }
+
+        .overlay.show {
+            display: block;
         }
 
         .main {
-            flex: 1;
-            min-width: 0;
-            padding: 30px;
+            min-height: 100vh;
+            margin-left: var(--sidebar-width);
+            transition: margin-left .25s ease;
+        }
+
+        .main.expanded {
+            margin-left: 0;
         }
 
         .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 15px 32px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
+            gap: 18px;
+            background: rgba(16,23,46,.88);
+            border-bottom: 1px solid rgba(44,57,89,.8);
+            backdrop-filter: blur(18px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            min-width: 0;
+        }
+
+        .menu-toggle {
+            width: 39px;
+            height: 39px;
+            border: 1px solid var(--borde);
+            border-radius: 11px;
+            background: var(--panel);
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--panel-hover);
+            border-color: var(--morado-claro);
+        }
+
+        .breadcrumb {
+            color: var(--texto-secundario);
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: var(--texto);
+            font-weight: 700;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--morado), var(--azul));
+            color: white;
+            font-weight: 800;
+        }
+
+        .user-name {
+            max-width: 180px;
+            overflow-wrap: anywhere;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .user-role {
+            margin-top: 3px;
+            color: var(--texto-secundario);
+            font-size: 10px;
+        }
+
+        .content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 32px 42px;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
             flex-wrap: wrap;
             margin-bottom: 28px;
         }
 
-        .topbar h1 {
-            font-size: 29px;
-            margin: 0 0 8px;
+        .eyebrow {
+            margin-bottom: 10px;
+            color: var(--morado-claro);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.8px;
         }
 
-        .topbar p {
-            margin: 0;
-            color: var(--secundario);
+        .page-title {
+            font-size: clamp(25px, 3vw, 34px);
+            line-height: 1.15;
+            letter-spacing: -.7px;
         }
 
-        .logout {
-            color: var(--texto);
-            background: var(--panel);
+        .welcome-description {
+            margin-top: 10px;
+            color: var(--texto-secundario);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .date-chip {
+            padding: 10px 14px;
             border: 1px solid var(--borde);
-            border-radius: 9px;
-            padding: 11px 15px;
-            text-decoration: none;
+            border-radius: 12px;
+            background: rgba(29,41,71,.72);
+            color: #C8D4F2;
+            font-size: 11px;
+            font-weight: 700;
         }
 
-        .logout:hover {
-            border-color: var(--morado);
-        }
-
-        .stats {
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
+            gap: 17px;
             margin-bottom: 25px;
         }
 
         .stat-card {
-            background: var(--panel);
-            border: 1px solid var(--borde);
-            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
             padding: 22px;
-        }
-
-        .stat-card p {
-            color: var(--secundario);
-            margin: 0 0 12px;
-            font-size: 14px;
-        }
-
-        .stat-card h2 {
-            margin: 0;
-            font-size: 28px;
-        }
-
-        .stat-card:nth-child(1) h2 {
-            color: var(--azul);
-        }
-
-        .stat-card:nth-child(2) h2 {
-            color: var(--morado);
-        }
-
-        .stat-card:nth-child(3) h2 {
-            color: var(--verde);
-        }
-
-        .panel {
-            background: var(--panel);
             border: 1px solid var(--borde);
-            border-radius: 14px;
-            padding: 23px;
-            margin-bottom: 25px;
+            border-radius: 17px;
+            background: linear-gradient(145deg, rgba(29,41,71,.96), rgba(21,30,57,.96));
         }
 
-        .panel-heading {
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: -35px;
+            right: -25px;
+            border-radius: 50%;
+            background: var(--stat-color, var(--morado));
+            opacity: .08;
+            filter: blur(2px);
+        }
+
+        .stat-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
         }
 
-        .panel-heading h2 {
+        .stat-label {
+            color: var(--texto-secundario);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: rgba(121,85,245,.14);
+            color: var(--morado-claro);
             font-size: 20px;
-            margin: 0;
         }
 
-        .muted {
-            color: var(--secundario);
-            font-size: 13px;
+        .stat-number {
+            margin-top: 17px;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -.7px;
+        }
+
+        .stat-description {
+            margin-top: 7px;
+            color: var(--texto-secundario);
+            font-size: 11px;
+        }
+
+        .stat-card.blue .stat-icon {
+            background: rgba(52,120,246,.14);
+            color: var(--azul-claro);
+        }
+
+        .stat-card.green .stat-icon {
+            background: rgba(72,214,160,.12);
+            color: var(--verde);
+        }
+
+        .stat-card.yellow .stat-icon {
+            background: rgba(255,209,102,.12);
+            color: var(--amarillo);
+        }
+
+        .section-card {
+            margin-bottom: 23px;
+            border: 1px solid var(--borde);
+            border-radius: 17px;
+            background: rgba(21,30,57,.82);
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 21px 23px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            margin-top: 5px;
+            color: var(--texto-secundario);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .section-body {
+            padding: 23px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 17px;
+            gap: 18px;
         }
 
-        .field {
+        .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .field label {
-            color: #d9dcef;
-            font-size: 13px;
-        }
-
-        .field input {
-            width: 100%;
-            min-width: 0;
-            background: #0e1120;
-            border: 1px solid var(--borde);
-            border-radius: 9px;
-            padding: 12px;
-            color: var(--texto);
-            outline: none;
-        }
-
-        .field input:focus {
-            border-color: var(--morado);
-        }
-
-        .field input[type="file"] {
-            padding: 9px;
-        }
-
-        .field-full {
+        .form-group.full {
             grid-column: 1 / -1;
+        }
+
+        .form-label {
+            color: #D5DDF1;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            min-height: 43px;
+            padding: 11px 13px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            outline: none;
+            background: #111A32;
+            color: var(--texto);
+            font-size: 12px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-control::placeholder {
+            color: #697A9F;
+        }
+
+        .form-control:focus {
+            border-color: var(--morado);
+            box-shadow: 0 0 0 3px rgba(121,85,245,.12);
+        }
+
+        input[type="file"].form-control {
+            padding: 8px;
+        }
+
+        input[type="file"]::file-selector-button {
+            margin-right: 10px;
+            padding: 7px 10px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--panel-hover);
+            color: var(--texto);
+            cursor: pointer;
+        }
+
+        .form-hint {
+            color: var(--texto-secundario);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .image-preview {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+            padding: 10px;
+            border: 1px dashed var(--borde);
+            border-radius: 10px;
+        }
+
+        .image-preview.show {
+            display: flex;
+        }
+
+        .image-preview img {
+            width: 58px;
+            height: 58px;
+            border-radius: 9px;
+            object-fit: cover;
+        }
+
+        .image-preview span {
+            color: var(--texto-secundario);
+            font-size: 11px;
+            overflow-wrap: anywhere;
         }
 
         .form-actions {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            justify-content: flex-end;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 21px;
         }
 
         .btn {
-            border: 0;
-            border-radius: 9px;
-            padding: 12px 17px;
-            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 10px 15px;
+            border: 1px solid transparent;
+            border-radius: 10px;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            font-size: 11px;
+            font-weight: 800;
+            transition: transform .2s, background .2s, border-color .2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
         }
 
         .btn-primary {
-            background: var(--morado);
-            color: #101020;
+            background: linear-gradient(110deg, var(--morado), #5B75F8);
+            color: #fff;
+            box-shadow: 0 5px 16px rgba(94,82,245,.18);
         }
 
         .btn-primary:hover {
-            filter: brightness(1.12);
+            filter: brightness(1.08);
         }
 
-        .btn-delete {
-            background: #3b1827;
-            border: 1px solid #713044;
-            color: #ffb6c3;
-            padding: 8px 10px;
-            font-size: 12px;
-        }
-
-        .search {
-            width: 100%;
-            max-width: 330px;
-            background: #0e1120;
-            border: 1px solid var(--borde);
+        .btn-secondary {
+            background: var(--panel);
+            border-color: var(--borde);
             color: var(--texto);
-            border-radius: 9px;
-            padding: 11px 13px;
-            outline: none;
         }
 
-        .search:focus {
+        .btn-secondary:hover {
+            background: var(--panel-hover);
+        }
+
+        .btn-danger {
+            background: rgba(255,113,139,.10);
+            border-color: rgba(255,113,139,.25);
+            color: var(--rojo);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255,113,139,.18);
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 13px;
+            padding: 20px 23px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+            max-width: 420px;
+        }
+
+        .search-box span {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--texto-secundario);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            min-height: 42px;
+            padding: 11px 13px 11px 38px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            outline: none;
+            background: #111A32;
+            color: var(--texto);
+            font-size: 11px;
+        }
+
+        .search-input:focus {
             border-color: var(--morado);
+            box-shadow: 0 0 0 3px rgba(121,85,245,.12);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 9px 11px;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            background: transparent;
+            color: var(--texto-secundario);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(121,85,245,.14);
+            border-color: rgba(169,149,255,.35);
+            color: var(--morado-claro);
         }
 
         .table-wrap {
@@ -307,565 +672,955 @@
             overflow-x: auto;
         }
 
-        table {
+        .inventory-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 780px;
-        }
-
-        th {
-            color: var(--secundario);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.7px;
-            text-align: left;
-            padding: 14px 12px;
-            border-bottom: 1px solid var(--borde);
             white-space: nowrap;
         }
 
-        td {
-            padding: 13px 12px;
-            border-bottom: 1px solid #24283b;
-            font-size: 14px;
-            vertical-align: middle;
+        .inventory-table th {
+            padding: 14px 18px;
+            background: rgba(17,26,50,.58);
+            color: #8293B8;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-align: left;
+            text-transform: uppercase;
         }
 
-        tbody tr:hover {
-            background: #1b2033;
+        .inventory-table td {
+            padding: 14px 18px;
+            border-top: 1px solid rgba(44,57,89,.65);
+            color: #D7E0F5;
+            font-size: 11px;
+        }
+
+        .inventory-table tbody tr {
+            transition: background .2s;
+        }
+
+        .inventory-table tbody tr:hover {
+            background: rgba(52,120,246,.045);
         }
 
         .product-image {
-            width: 64px;
-            height: 58px;
-            object-fit: contain;
-            background: #0e1120;
-            border: 1px solid var(--borde);
-            border-radius: 9px;
-            padding: 4px;
+            width: 45px;
+            height: 45px;
             display: block;
+            object-fit: cover;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--panel);
         }
 
-        .product-image-placeholder {
-            width: 64px;
-            height: 58px;
+        .product-placeholder {
+            width: 45px;
+            height: 45px;
+            display: grid;
             place-items: center;
-            background: #20243a;
             border: 1px solid var(--borde);
-            border-radius: 9px;
-            color: var(--morado);
-            font-size: 24px;
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--texto-secundario);
+            font-size: 18px;
         }
 
         .product-name {
-            font-weight: bold;
-            min-width: 140px;
+            font-weight: 800;
+            color: var(--texto);
+        }
+
+        .product-code {
+            color: var(--texto-secundario);
+            font-size: 10px;
         }
 
         .price {
-            color: var(--verde);
-            font-weight: bold;
-            white-space: nowrap;
+            font-weight: 800;
+            color: #B6C8FF;
         }
 
-        .stock-badge {
-            display: inline-block;
+        .stock-number {
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             padding: 6px 9px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            white-space: nowrap;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            font-size: 9px;
+            font-weight: 800;
         }
 
-        .stock-ok {
+        .status::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status.available {
             color: var(--verde);
-            background: #123326;
+            background: rgba(72,214,160,.09);
+            border-color: rgba(72,214,160,.17);
         }
 
-        .stock-low {
+        .status.low {
             color: var(--amarillo);
-            background: #393117;
+            background: rgba(255,209,102,.09);
+            border-color: rgba(255,209,102,.17);
         }
 
-        .stock-out {
+        .status.empty {
             color: var(--rojo);
-            background: #3a1b28;
+            background: rgba(255,113,139,.09);
+            border-color: rgba(255,113,139,.17);
         }
 
-        .empty {
-            padding: 30px;
-            color: var(--secundario);
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            background: var(--panel);
+            color: var(--texto-secundario);
+            cursor: pointer;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+        .action-btn:hover {
+            border-color: rgba(255,113,139,.4);
+            color: var(--rojo);
+            background: rgba(255,113,139,.08);
+        }
+
+        .empty-state {
+            padding: 45px 20px;
             text-align: center;
+            color: var(--texto-secundario);
+        }
+
+        .empty-state-icon {
+            margin-bottom: 13px;
+            font-size: 34px;
+        }
+
+        .empty-state-title {
+            color: var(--texto);
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .empty-state-text {
+            margin-top: 7px;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 15px 22px;
+            border-top: 1px solid var(--borde);
+            color: var(--texto-secundario);
+            font-size: 10px;
+        }
+
+        .flash-messages {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 20px;
         }
 
         .flash {
-            padding: 13px 16px;
-            border-radius: 9px;
-            margin-bottom: 18px;
-            background: #1d2940;
-            border: 1px solid #35476a;
-            color: #dceaff;
-            overflow-wrap: anywhere;
-        }
-
-        .preview-container {
-            display: none;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .preview-container img {
-            width: 85px;
-            height: 75px;
-            object-fit: contain;
-            background: #0e1120;
+            padding: 13px 15px;
             border: 1px solid var(--borde);
-            border-radius: 9px;
-            padding: 4px;
+            border-radius: 10px;
+            background: var(--panel);
+            font-size: 12px;
+            line-height: 1.5;
         }
 
-        @media (max-width: 950px) {
+        .flash.success {
+            border-color: rgba(72,214,160,.35);
+            color: var(--verde);
+        }
+
+        .flash.error,
+        .flash.danger {
+            border-color: rgba(255,113,139,.35);
+            color: var(--rojo);
+        }
+
+        .flash.warning {
+            border-color: rgba(255,209,102,.35);
+            color: var(--amarillo);
+        }
+
+        .flash.info {
+            border-color: rgba(117,166,255,.35);
+            color: var(--azul-claro);
+        }
+
+        .footer {
+            padding: 18px 0 0;
+            color: #7383A8;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+
+            .content {
+                padding: 25px 22px 35px;
+            }
+
+            .topbar {
+                padding: 15px 22px;
+            }
+        }
+
+        @media (max-width: 850px) {
             .sidebar {
-                width: 210px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
             }
 
             .main {
-                padding: 22px;
+                margin-left: 0;
             }
 
-            .stats {
+            .main.expanded {
+                margin-left: 0;
+            }
+
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .stat-card {
+                padding: 19px;
+            }
         }
 
-        @media (max-width: 650px) {
-            .layout {
-                display: block;
+        @media (max-width: 600px) {
+            .topbar {
+                min-height: 66px;
+                padding: 12px 15px;
             }
 
-            .sidebar {
-                width: 100%;
-                border-right: 0;
-                border-bottom: 1px solid var(--borde);
+            .topbar-left {
+                gap: 11px;
             }
 
-            .brand-subtitle {
-                margin-bottom: 20px;
+            .topbar-user {
+                gap: 8px;
             }
 
-            .main {
+            .avatar {
+                width: 34px;
+                height: 34px;
+            }
+
+            .user-name {
+                max-width: 105px;
+                font-size: 10px;
+            }
+
+            .user-role {
+                font-size: 9px;
+            }
+
+            .content {
+                padding: 23px 14px 30px;
+            }
+
+            .welcome {
+                margin-bottom: 21px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .welcome-description {
+                font-size: 12px;
+            }
+
+            .section-header,
+            .section-body {
                 padding: 17px;
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
 
-            .field-full {
+            .form-group.full {
                 grid-column: auto;
             }
 
-            .panel {
+            .toolbar {
                 padding: 16px;
             }
 
-            .topbar h1 {
-                font-size: 24px;
+            .search-box {
+                min-width: 100%;
+                max-width: none;
+            }
+
+            .filter-buttons {
+                width: 100%;
+            }
+
+            .filter-btn {
+                flex: 1;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            .date-chip {
+                font-size: 10px;
             }
         }
     </style>
 </head>
 
 <body>
-<div class="layout">
+<div class="app">
 
-    <aside class="sidebar">
-        <div class="brand">NEXORA<span>.</span></div>
-        <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
-
-        <div class="user-card">
-            <strong>{{ usuario }}</strong>
-            <small>{{ rol }}</small>
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-logo">N</div>
+            <div>
+                <div class="brand-name">NEXORA</div>
+                <div class="brand-subtitle">GAMING & TECHNOLOGY</div>
+            </div>
         </div>
 
-        <nav class="menu">
-            <div class="menu-title">Principal</div>
+        <div class="nav-label">MENÚ PRINCIPAL</div>
 
-            <a href="{{ url_for('dashboard') }}">
-                ⌂ &nbsp; Dashboard
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
             </a>
 
-            <a href="{{ url_for('ver_inventario') }}" class="active">
-                ▦ &nbsp; Inventario
+            <a href="{{ url_for('ver_inventario') }}" class="nav-link active">
+                <span class="nav-icon">▤</span>
+                <span>Inventario</span>
             </a>
 
-            <a href="{{ url_for('ver_ventas') }}">
-                ▤ &nbsp; Ventas
+            <a href="{{ url_for('ver_ventas') }}" class="nav-link">
+                <span class="nav-icon">↗</span>
+                <span>Ventas</span>
             </a>
 
-            <a href="{{ url_for('ver_estadisticas') }}">
-                ▥ &nbsp; Estadísticas
-            </a>
-
-            <div class="menu-title">Cuenta</div>
-
-            <a href="{{ url_for('cerrar_sesion') }}">
-                ↪ &nbsp; Cerrar sesión
+            <a href="{{ url_for('ver_estadisticas') }}" class="nav-link">
+                <span class="nav-icon">▥</span>
+                <span>Estadísticas</span>
             </a>
         </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-card">
+                <div class="system-card-title">
+                    <span class="system-indicator"></span>
+                    Sistema operativo
+                </div>
+                <div class="system-card-description">
+                    NEXORA está preparado para gestionar productos y controlar el inventario.
+                </div>
+            </div>
+
+            <nav class="nav-menu" style="margin-top: 15px;">
+                <a href="{{ url_for('cerrar_sesion') }}" class="nav-link">
+                    <span class="nav-icon">⇥</span>
+                    <span>Cerrar sesión</span>
+                </a>
+            </nav>
+        </div>
     </aside>
 
-    <main class="main">
+    <div class="overlay" id="overlay"></div>
+
+    <main class="main" id="main">
 
         <header class="topbar">
-            <div>
-                <h1>Inventario de productos</h1>
-                <p>Administra los productos y controla las existencias.</p>
+            <div class="topbar-left">
+                <button type="button" class="menu-toggle" id="menuToggle"
+                        aria-label="Abrir o cerrar menú">☰</button>
+
+                <div class="breadcrumb">
+                    NEXORA&nbsp; / &nbsp;<strong>Inventario</strong>
+                </div>
             </div>
 
-            <a class="logout" href="{{ url_for('cerrar_sesion') }}">
-                Cerrar sesión ↗
-            </a>
+            <div class="topbar-user">
+                <div class="avatar">
+                    {{ (usuario|string)[:1]|upper if usuario else 'U' }}
+                </div>
+
+                <div>
+                    <div class="user-name">{{ usuario or 'Usuario' }}</div>
+                    <div class="user-role">{{ rol or 'Usuario del sistema' }}</div>
+                </div>
+            </div>
         </header>
 
-        {% with mensajes = get_flashed_messages() %}
-            {% if mensajes %}
-                {% for mensaje in mensajes %}
-                    <div class="flash">{{ mensaje }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        <div class="content">
 
-        {% set total_productos = productos|length %}
-        {% set unidades = namespace(total=0, bajos=0) %}
-
-        {% for producto in productos %}
-            {% set unidades.total = unidades.total + (producto.stock|int) %}
-
-            {% if producto.stock|int < 5 %}
-                {% set unidades.bajos = unidades.bajos + 1 %}
-            {% endif %}
-        {% endfor %}
-
-        <section class="stats">
-            <div class="stat-card">
-                <p>Productos registrados</p>
-                <h2>{{ total_productos }}</h2>
-            </div>
-
-            <div class="stat-card">
-                <p>Unidades en existencia</p>
-                <h2>{{ unidades.total }}</h2>
-            </div>
-
-            <div class="stat-card">
-                <p>Productos con stock bajo</p>
-                <h2>{{ unidades.bajos }}</h2>
-            </div>
-        </section>
-
-        {% if rol in ['Administrador', 'Encargado de Inventario'] %}
-        <section class="panel">
-            <div class="panel-heading">
-                <h2>Agregar producto</h2>
-                <span class="muted">Completa los datos del producto</span>
-            </div>
-
-            <form
-                action="{{ url_for('ver_inventario') }}"
-                method="POST"
-                enctype="multipart/form-data"
-            >
-                <div class="form-grid">
-
-                    <div class="field">
-                        <label for="codigo">Código del producto</label>
-                        <input
-                            type="text"
-                            id="codigo"
-                            name="codigo"
-                            placeholder="Ej. NX101"
-                            required
-                        >
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    <div class="flash-messages">
+                        {% for categoria, mensaje in mensajes %}
+                            <div class="flash {{ categoria }}">
+                                {{ mensaje }}
+                            </div>
+                        {% endfor %}
                     </div>
+                {% endif %}
+            {% endwith %}
 
-                    <div class="field">
-                        <label for="nombre">Nombre del producto</label>
-                        <input
-                            type="text"
-                            id="nombre"
-                            name="nombre"
-                            placeholder="Ej. Teclado mecánico RGB"
-                            required
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="precio">Precio de venta (Q)</label>
-                        <input
-                            type="number"
-                            id="precio"
-                            name="precio"
-                            placeholder="0.00"
-                            min="0.01"
-                            step="0.01"
-                            required
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="stock">Cantidad en existencia</label>
-                        <input
-                            type="number"
-                            id="stock"
-                            name="stock"
-                            placeholder="Ej. 10"
-                            min="0"
-                            step="1"
-                            required
-                        >
-                    </div>
-
-                    <div class="field field-full">
-                        <label for="imagen">
-                            Fotografía del producto (opcional)
-                        </label>
-
-                        <input
-                            type="file"
-                            id="imagen"
-                            name="imagen"
-                            accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif"
-                        >
-
-                        <div class="muted">
-                            Puedes seleccionar una imagen JPG, PNG, WEBP o GIF
-                            desde tu computadora.
-                        </div>
-
-                        <div class="preview-container" id="previewContainer">
-                            <img
-                                id="previewImagen"
-                                src=""
-                                alt="Vista previa del producto"
-                            >
-                            <span class="muted">
-                                Vista previa de la imagen seleccionada
-                            </span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        + Registrar producto
-                    </button>
-                </div>
-            </form>
-        </section>
-        {% endif %}
-
-        <section class="panel">
-            <div class="panel-heading">
+            <section class="welcome">
                 <div>
-                    <h2>Productos registrados</h2>
-                    <span class="muted">
-                        Consulta los precios y las existencias.
-                    </span>
+                    <div class="eyebrow">GESTIÓN COMERCIAL</div>
+                    <h1 class="page-title">Control de inventario</h1>
+                    <p class="welcome-description">
+                        Administra tus productos, consulta existencias y mantén actualizado
+                        el inventario de NEXORA.
+                    </p>
                 </div>
 
-                <input
-                    type="search"
-                    id="buscador"
-                    class="search"
-                    placeholder="Buscar por código o nombre..."
-                    aria-label="Buscar productos"
-                >
-            </div>
+                <div class="date-chip">
+                    ◷ &nbsp; Panel de inventario
+                </div>
+            </section>
 
-            <div class="table-wrap">
-                <table id="tablaProductos">
-                    <thead>
-                        <tr>
-                            <th>Imagen</th>
-                            <th>Código</th>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Estado</th>
+            {% set total_productos = productos|length %}
+            {% set unidades = namespace(total=0, bajos=0) %}
 
-                            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
-                                <th>Acciones</th>
-                            {% endif %}
-                        </tr>
-                    </thead>
+            {% for producto in productos %}
+                {% set unidades.total = unidades.total + (producto.stock|int) %}
+                {% if producto.stock|int < 5 %}
+                    {% set unidades.bajos = unidades.bajos + 1 %}
+                {% endif %}
+            {% endfor %}
 
-                    <tbody>
-                    {% for producto in productos %}
-                        <tr>
-                            <td>
-                                {% if producto.imagen %}
-                                    <img
-                                        class="product-image"
-                                        src="{{ producto.imagen }}"
-                                        alt="{{ producto.nombre }}"
-                                        loading="lazy"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
-                                    >
+            <section class="stats-grid">
 
-                                    <div
-                                        class="product-image-placeholder"
-                                        style="display:none;"
-                                    >
-                                        ▦
-                                    </div>
-                                {% else %}
-                                    <div
-                                        class="product-image-placeholder"
-                                        style="display:grid;"
-                                    >
-                                        ▦
-                                    </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-label">Productos registrados</div>
+                        <div class="stat-icon">▤</div>
+                    </div>
+                    <div class="stat-number">{{ total_productos }}</div>
+                    <div class="stat-description">
+                        Productos guardados en el inventario
+                    </div>
+                </div>
+
+                <div class="stat-card blue">
+                    <div class="stat-top">
+                        <div class="stat-label">Unidades en existencia</div>
+                        <div class="stat-icon">▦</div>
+                    </div>
+                    <div class="stat-number">{{ unidades.total }}</div>
+                    <div class="stat-description">
+                        Cantidad total de unidades registradas
+                    </div>
+                </div>
+
+                <div class="stat-card yellow">
+                    <div class="stat-top">
+                        <div class="stat-label">Productos con stock bajo</div>
+                        <div class="stat-icon">⚠</div>
+                    </div>
+                    <div class="stat-number">{{ unidades.bajos }}</div>
+                    <div class="stat-description">
+                        Productos con menos de 5 unidades
+                    </div>
+                </div>
+
+            </section>
+
+            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+            <section class="section-card">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Registrar nuevo producto</h2>
+                        <p class="section-subtitle">
+                            Completa los datos para agregar un producto al inventario.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="section-body">
+                    <form action="{{ url_for('ver_inventario') }}"
+                          method="POST"
+                          enctype="multipart/form-data"
+                          id="productForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label class="form-label" for="codigo">
+                                    Código del producto *
+                                </label>
+                                <input class="form-control"
+                                       type="text"
+                                       id="codigo"
+                                       name="codigo"
+                                       placeholder="Ej. NX001"
+                                       maxlength="30"
+                                       required>
+                                <span class="form-hint">
+                                    Utiliza un código único para identificar el producto.
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="nombre">
+                                    Nombre del producto *
+                                </label>
+                                <input class="form-control"
+                                       type="text"
+                                       id="nombre"
+                                       name="nombre"
+                                       placeholder="Ej. Teclado mecánico RGB"
+                                       maxlength="100"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="precio">
+                                    Precio de venta (Q) *
+                                </label>
+                                <input class="form-control"
+                                       type="number"
+                                       id="precio"
+                                       name="precio"
+                                       placeholder="0.00"
+                                       min="0.01"
+                                       step="0.01"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="stock">
+                                    Cantidad disponible *
+                                </label>
+                                <input class="form-control"
+                                       type="number"
+                                       id="stock"
+                                       name="stock"
+                                       placeholder="0"
+                                       min="0"
+                                       step="1"
+                                       required>
+                            </div>
+
+                            <div class="form-group full">
+                                <label class="form-label" for="imagen">
+                                    Imagen del producto (opcional)
+                                </label>
+                                <input class="form-control"
+                                       type="file"
+                                       id="imagen"
+                                       name="imagen"
+                                       accept=".png,.jpg,.jpeg,.webp,.gif">
+                                <span class="form-hint">
+                                    Formatos permitidos: PNG, JPG, JPEG, WEBP y GIF.
+                                </span>
+
+                                <div class="image-preview" id="imagePreview">
+                                    <img src="" alt="Vista previa" id="previewImage">
+                                    <span id="imageName"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">
+                                ↺ &nbsp; Limpiar formulario
+                            </button>
+
+                            <button type="submit" class="btn btn-primary">
+                                ＋ &nbsp; Registrar producto
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="section-card">
+
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Productos registrados</h2>
+                        <p class="section-subtitle">
+                            Consulta, busca y revisa las existencias de cada producto.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input type="search"
+                               id="searchInput"
+                               class="search-input"
+                               placeholder="Buscar por código o nombre..."
+                               aria-label="Buscar productos">
+                    </div>
+
+                    <div class="filter-buttons">
+                        <button type="button" class="filter-btn active"
+                                data-filter="all">
+                            Todos
+                        </button>
+
+                        <button type="button" class="filter-btn"
+                                data-filter="low">
+                            Stock bajo
+                        </button>
+
+                        <button type="button" class="filter-btn"
+                                data-filter="empty">
+                            Agotados
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="table-wrap">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Existencias</th>
+                                <th>Estado</th>
+                                {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+                                    <th>Acciones</th>
                                 {% endif %}
-                            </td>
+                            </tr>
+                        </thead>
 
-                            <td>{{ producto.codigo }}</td>
+                        <tbody id="productTableBody">
 
-                            <td class="product-name">
-                                {{ producto.nombre }}
-                            </td>
+                            {% for producto in productos %}
+                            <tr class="product-row"
+                                data-stock="{{ producto.stock|int }}">
 
-                            <td class="price">
-                                Q {{ "%.2f"|format(producto.precio|float) }}
-                            </td>
+                                <td>
+                                    {% if producto.imagen %}
+                                        <img class="product-image"
+                                             src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}"
+                                             alt="{{ producto.nombre }}"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
 
-                            <td>{{ producto.stock }}</td>
+                                        <div class="product-placeholder"
+                                             style="display:none;">▧</div>
+                                    {% else %}
+                                        <div class="product-placeholder">▧</div>
+                                    {% endif %}
+                                </td>
 
-                            <td>
-                                {% if producto.stock|int <= 0 %}
-                                    <span class="stock-badge stock-out">
-                                        Agotado
-                                    </span>
-                                {% elif producto.stock|int < 5 %}
-                                    <span class="stock-badge stock-low">
-                                        Stock bajo
-                                    </span>
-                                {% else %}
-                                    <span class="stock-badge stock-ok">
-                                        Disponible
-                                    </span>
+                                <td>
+                                    <div class="product-name">
+                                        {{ producto.nombre }}
+                                    </div>
+                                    <div class="product-code">
+                                        Código: {{ producto.codigo }}
+                                    </div>
+                                </td>
+
+                                <td class="price">
+                                    Q {{ "%.2f"|format(producto.precio|float) }}
+                                </td>
+
+                                <td class="stock-number">
+                                    {{ producto.stock }}
+                                </td>
+
+                                <td>
+                                    {% if producto.stock|int <= 0 %}
+                                        <span class="status empty">Agotado</span>
+                                    {% elif producto.stock|int < 5 %}
+                                        <span class="status low">Stock bajo</span>
+                                    {% else %}
+                                        <span class="status available">Disponible</span>
+                                    {% endif %}
+                                </td>
+
+                                {% if rol in ['Administrador', 'Encargado de Inventario'] %}
+                                <td>
+                                    <div class="action-buttons">
+                                        <form action="{{ url_for('eliminar', codigo=producto.codigo) }}"
+                                              method="POST"
+                                              onsubmit="return confirmarEliminacion('{{ producto.nombre|e }}');">
+
+                                            <button type="submit"
+                                                    class="action-btn"
+                                                    title="Eliminar producto"
+                                                    aria-label="Eliminar {{ producto.nombre }}">
+                                                ✕
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                                 {% endif %}
-                            </td>
 
-                            {% if rol in ['Administrador', 'Encargado de Inventario'] %}
-                            <td>
-                                <form
-                                    action="{{ url_for('eliminar', codigo=producto.codigo) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');"
-                                >
-                                    <button type="submit" class="btn btn-delete">
-                                        Eliminar
-                                    </button>
-                                </form>
-                            </td>
-                            {% endif %}
-                        </tr>
+                            </tr>
 
-                    {% else %}
-                        <tr>
-                            <td
-                                colspan="{% if rol in ['Administrador', 'Encargado de Inventario'] %}7{% else %}6{% endif %}"
-                                class="empty"
-                            >
-                                Todavía no hay productos registrados en el inventario.
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            {% else %}
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">▤</div>
+                                        <div class="empty-state-title">
+                                            El inventario está vacío
+                                        </div>
+                                        <div class="empty-state-text">
+                                            Cuando registres productos, aparecerán aquí.
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
 
-            <p
-                class="muted"
-                id="sinResultados"
-                style="display:none; margin-top:20px;"
-            >
-                No se encontraron productos con esa búsqueda.
-            </p>
-        </section>
+                        </tbody>
+                    </table>
+                </div>
 
+                <div class="table-footer">
+                    <span id="tableCount">
+                        Mostrando {{ productos|length }} productos
+                    </span>
+                    <span>NEXORA · Gestión de inventario</span>
+                </div>
+
+            </section>
+
+            <footer class="footer">
+                NEXORA GAMING & TECHNOLOGY · Sistema de gestión comercial
+            </footer>
+
+        </div>
     </main>
 </div>
 
 <script>
-    const buscador = document.getElementById("buscador");
-    const filas = document.querySelectorAll("#tablaProductos tbody tr");
-    const sinResultados = document.getElementById("sinResultados");
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("main");
+    const menuToggle = document.getElementById("menuToggle");
+    const overlay = document.getElementById("overlay");
 
-    buscador.addEventListener("input", function () {
-        const busqueda = this.value.toLowerCase().trim();
-        let encontrados = 0;
+    function esMovil() {
+        return window.innerWidth <= 850;
+    }
 
-        filas.forEach(function (fila) {
+    menuToggle.addEventListener("click", function () {
+        if (esMovil()) {
+            sidebar.classList.toggle("mobile-open");
+            overlay.classList.toggle("show");
+        } else {
+            sidebar.classList.toggle("hidden");
+            main.classList.toggle("expanded");
+        }
+    });
+
+    overlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("show");
+    });
+
+    window.addEventListener("resize", function () {
+        if (!esMovil()) {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("show");
+        } else {
+            sidebar.classList.remove("hidden");
+            main.classList.remove("expanded");
+        }
+    });
+
+    const searchInput = document.getElementById("searchInput");
+    const productRows = Array.from(document.querySelectorAll(".product-row"));
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const tableCount = document.getElementById("tableCount");
+
+    let filtroActual = "all";
+
+    function filtrarProductos() {
+        const busqueda = searchInput.value.trim().toLowerCase();
+        let visibles = 0;
+
+        productRows.forEach(function (fila) {
             const texto = fila.textContent.toLowerCase();
-            const esProducto = fila.querySelector(".product-name");
+            const stock = Number(fila.dataset.stock);
 
-            if (texto.includes(busqueda)) {
-                fila.style.display = "";
+            const coincideBusqueda = texto.includes(busqueda);
 
-                if (esProducto) {
-                    encontrados++;
-                }
-            } else {
-                fila.style.display = "none";
+            let coincideFiltro = true;
+
+            if (filtroActual === "low") {
+                coincideFiltro = stock > 0 && stock < 5;
+            } else if (filtroActual === "empty") {
+                coincideFiltro = stock <= 0;
+            }
+
+            const mostrar = coincideBusqueda && coincideFiltro;
+
+            fila.style.display = mostrar ? "" : "none";
+
+            if (mostrar) {
+                visibles++;
             }
         });
 
-        sinResultados.style.display =
-            encontrados === 0 && busqueda !== "" ? "block" : "none";
+        tableCount.textContent =
+            "Mostrando " + visibles + " de " + productRows.length + " productos";
+    }
+
+    searchInput.addEventListener("input", filtrarProductos);
+
+    filterButtons.forEach(function (boton) {
+        boton.addEventListener("click", function () {
+            filterButtons.forEach(function (otro) {
+                otro.classList.remove("active");
+            });
+
+            boton.classList.add("active");
+            filtroActual = boton.dataset.filter;
+
+            filtrarProductos();
+        });
     });
 
-    const campoImagen = document.getElementById("imagen");
-    const previewContainer = document.getElementById("previewContainer");
-    const previewImagen = document.getElementById("previewImagen");
+    function confirmarEliminacion(nombre) {
+        return confirm(
+            '¿Estás seguro de que deseas eliminar el producto "' +
+            nombre +
+            '"? Esta acción no se puede deshacer.'
+        );
+    }
 
-    if (campoImagen) {
-        campoImagen.addEventListener("change", function () {
-            const archivo = this.files[0];
+    const productForm = document.getElementById("productForm");
 
-            if (!archivo) {
-                previewContainer.style.display = "none";
-                previewImagen.removeAttribute("src");
+    if (productForm) {
+        productForm.addEventListener("submit", function (evento) {
+            const codigo = document.getElementById("codigo").value.trim();
+            const nombre = document.getElementById("nombre").value.trim();
+            const precio = Number(document.getElementById("precio").value);
+            const stock = Number(document.getElementById("stock").value);
+
+            if (!codigo || !nombre) {
+                evento.preventDefault();
+                alert("Ingresa el código y el nombre del producto.");
                 return;
             }
 
-            const tiposPermitidos = [
+            if (!Number.isFinite(precio) || precio <= 0) {
+                evento.preventDefault();
+                alert("El precio debe ser mayor que cero.");
+                return;
+            }
+
+            if (!Number.isInteger(stock) || stock < 0) {
+                evento.preventDefault();
+                alert("La cantidad debe ser un número entero igual o mayor que cero.");
+            }
+        });
+
+        productForm.addEventListener("reset", function () {
+            const imagePreview = document.getElementById("imagePreview");
+            const previewImage = document.getElementById("previewImage");
+
+            imagePreview.classList.remove("show");
+            previewImage.src = "";
+        });
+    }
+
+    const imageInput = document.getElementById("imagen");
+
+    if (imageInput) {
+        imageInput.addEventListener("change", function () {
+            const archivo = this.files[0];
+            const imagePreview = document.getElementById("imagePreview");
+            const previewImage = document.getElementById("previewImage");
+            const imageName = document.getElementById("imageName");
+
+            if (!archivo) {
+                imagePreview.classList.remove("show");
+                previewImage.src = "";
+                return;
+            }
+
+            const extensionesPermitidas = [
                 "image/png",
                 "image/jpeg",
                 "image/webp",
                 "image/gif"
             ];
 
-            if (!tiposPermitidos.includes(archivo.type)) {
+            if (!extensionesPermitidas.includes(archivo.type)) {
                 alert("Selecciona una imagen PNG, JPG, WEBP o GIF.");
                 this.value = "";
-                previewContainer.style.display = "none";
-                previewImagen.removeAttribute("src");
+                imagePreview.classList.remove("show");
                 return;
             }
 
-            if (previewImagen.dataset.urlAnterior) {
-                URL.revokeObjectURL(previewImagen.dataset.urlAnterior);
-            }
+            const lector = new FileReader();
 
-            const urlTemporal = URL.createObjectURL(archivo);
+            lector.onload = function (evento) {
+                previewImage.src = evento.target.result;
+                imageName.textContent = archivo.name;
+                imagePreview.classList.add("show");
+            };
 
-            previewImagen.src = urlTemporal;
-            previewImagen.dataset.urlAnterior = urlTemporal;
-            previewContainer.style.display = "flex";
+            lector.readAsDataURL(archivo);
         });
     }
 </script>
